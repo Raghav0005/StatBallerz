@@ -1,0 +1,5 @@
+connect to cs348
+create table test(id int);
+insert into test (id) values (1);
+select * from test;
+quiot
