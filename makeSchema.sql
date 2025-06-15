@@ -8,7 +8,7 @@ CREATE TABLE Users (
     userID    INTEGER NOT NULL
                 GENERATED ALWAYS AS IDENTITY 
                   (START WITH 1, INCREMENT BY 1),
-    Username  VARCHAR(100)  NOT NULL UNIQUE,
+    Username  VARCHAR(100)  UNIQUE,
     PasswordHash VARCHAR(255) NOT NULL,
     HighestQuizSzt INTEGER      DEFAULT 0,
     PRIMARY KEY (userID)
@@ -25,10 +25,11 @@ CREATE TABLE Questions (
 );
 
 CREATE TABLE Answers (
+    AnswerID INTEGER NOT NULL,
     QuestionID   INTEGER NOT NULL,
     ResponseText VARCHAR(200) NOT NULL,
     Correct      CHAR(1) NOT NULL CHECK (Correct IN ('T', 'F')),
-    PRIMARY KEY (QuestionID, ResponseText),
+    PRIMARY KEY (AnswerID),
     FOREIGN KEY (QuestionID) REFERENCES Questions(QuestionID)
 );
 
@@ -36,15 +37,17 @@ CREATE TABLE Teams (
     TeamID   INTEGER NOT NULL
                 GENERATED ALWAYS AS IDENTITY 
                   (START WITH 1, INCREMENT BY 1),
+    TeamYear      INTEGER     DEFAULT 1949,
     TeamName VARCHAR(100) NOT NULL,
     Ranking  INTEGER,
-    PRIMARY KEY (TeamID)
+    PRIMARY KEY (TeamID, TeamYear)
 );
 
 CREATE TABLE Players (
     PlayerID        INTEGER NOT NULL
                        GENERATED ALWAYS AS IDENTITY 
                          (START WITH 1, INCREMENT BY 1),
+    PlayerYear      INTEGER     DEFAULT 1949,
     Pname           VARCHAR(100) NOT NULL,
     TeamID          INTEGER     NOT NULL,
     GamesPlayed     INTEGER     DEFAULT 0,
@@ -60,6 +63,6 @@ CREATE TABLE Players (
     Blocks          INTEGER     DEFAULT 0,
     Turnovers       INTEGER     DEFAULT 0,
     Points          INTEGER     DEFAULT 0,
-    PRIMARY KEY (PlayerID),
+    PRIMARY KEY (PlayerID, PlayerYear),
     FOREIGN KEY (TeamID) REFERENCES Teams(TeamID)
 );
