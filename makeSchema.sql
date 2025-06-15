@@ -5,13 +5,12 @@ drop table if exists Teams;
 drop table if exists Players;
 
 CREATE TABLE Users (
-    userID    INTEGER NOT NULL
+    UserID    INTEGER NOT NULL
                 GENERATED ALWAYS AS IDENTITY 
                   (START WITH 1, INCREMENT BY 1),
-    Username  VARCHAR(100)  UNIQUE,
+    Username  VARCHAR(100)  NOT NULL UNIQUE,
     PasswordHash VARCHAR(255) NOT NULL,
-    HighestQuizSzt INTEGER      DEFAULT 0,
-    PRIMARY KEY (userID)
+    PRIMARY KEY (UserID)
 );
 
 CREATE TABLE Questions (
@@ -21,35 +20,86 @@ CREATE TABLE Questions (
     AuthorID     INTEGER NOT NULL,
     QuestionText VARCHAR(200) NOT NULL,
     PRIMARY KEY (QuestionID),
-    FOREIGN KEY (AuthorID) REFERENCES Users(userID)
+    FOREIGN KEY (AuthorID) REFERENCES Users(UserID)
 );
 
 CREATE TABLE Answers (
-    AnswerID INTEGER NOT NULL,
     QuestionID   INTEGER NOT NULL,
+    AnswerNumber INTEGER NOT NULL,
     ResponseText VARCHAR(200) NOT NULL,
-    Correct      CHAR(1) NOT NULL CHECK (Correct IN ('T', 'F')),
-    PRIMARY KEY (AnswerID),
+    IsCorrect      BOOLEAN NOT NULL,
+    PRIMARY KEY (QuestionID, AnswerNumber),
     FOREIGN KEY (QuestionID) REFERENCES Questions(QuestionID)
+);
+
+CREATE TABLE Quizzes (
+    QuizID  INTEGER NOT NULL
+                    GENERATED ALWAYS AS IDENTITY 
+                      (START WITH 1, INCREMENT BY 1),
+    Title VARCHAR(100) NOT NULL,
+    AuthorID     INTEGER NOT NULL,
+    PRIMARY KEY (QuizID),
+    FOREIGN KEY (AuthorID) REFERENCES Users(UserID)
+);
+
+CREATE TABLE QuizQuestions (
+    QuizID INTEGER NOT NULL,
+    QuestionID INTEGER NOT NULL,
+    PRIMARY KEY (QuizID, QuestionID),
+    FOREIGN KEY QuizID REFERENCES Quizzes(QuizID),
+    FOREIGN KEY QuestionID REFERENCES Questions(QuestionID)
+);
+
+CREATE TABLE QuizAttempts (
+    QuizID INTEGER NOT NULL,
+    QuizTaker INTEGER NOT NULL,
+    AttemptNumber INTEGER NOT NULL,
+    Score INTEGER NOT NULL,
+    PRIMARY KEY (QuizID, QuizTaker, AttemptNumber),
+    FOREIGN KEY (QuizID) REFERENCES Quizzes(QuizID),
+    FOREIGN KEY (QuizTaker) REFERENCES Users(UserID)
+);
+
+CREATE TABLE QuizAttemptAnswers (
+    QuizID INTEGER NOT NULL,
+    QuizTaker INTEGER NOT NULL,
+    AttemptNumber INTEGER NOT NULL,
+    QuestionID INTEGER NOT NULL,
+    AnswerNumber INTEGER NOT NULL,
+    PRIMARY KEY (QuizID, QuizTaker, AttemptNumber, QuestionID, AnswerNumber),
+    FOREIGN KEY (QuizID, QuizTaker, AttemptNumber) REFERENCES QuizAttempts (QuizID, QuizTaker, AttemptNumber),
+    FOREIGN KEY (QuestionID, AnswerNumber) REFERENCES Answers(QuestionID, AnswerNumber)
 );
 
 CREATE TABLE Teams (
     TeamID   INTEGER NOT NULL
                 GENERATED ALWAYS AS IDENTITY 
                   (START WITH 1, INCREMENT BY 1),
-    TeamYear      INTEGER     DEFAULT 1949,
     TeamName VARCHAR(100) NOT NULL,
-    Ranking  INTEGER,
-    PRIMARY KEY (TeamID, TeamYear)
+    PRIMARY KEY (TeamID)
+);
+
+CREATE TABLE TeamSeasons (
+    TeamID INTEGER NOT NULL,
+    SeasonStartYear INTEGER NOT NULL,
+    SeasonEndYear INTEGER NOT NULL,
+    SeasonRanking INTEGER,
+    PRIMARY KEY (TeamID, SeasonStartYear),
+    FOREIGN KEY (TeamID) REFERENCES Teams(TeamID)
 );
 
 CREATE TABLE Players (
     PlayerID        INTEGER NOT NULL
                        GENERATED ALWAYS AS IDENTITY 
                          (START WITH 1, INCREMENT BY 1),
-    PlayerYear      INTEGER     DEFAULT 1949,
-    Pname           VARCHAR(100) NOT NULL,
-    TeamID          INTEGER     NOT NULL,
+    PName           VARCHAR(100) NOT NULL,
+    PRIMARY KEY (PlayerID)
+);
+
+CREATE TABLE PlayerStats (
+    PlayerID INTEGER NOT NULL,
+    TeamID INTEGER NOT NULL,
+    SeasonStartYear INTEGER NOT NULL,
     GamesPlayed     INTEGER     DEFAULT 0,
     FieldGoalAttempt INTEGER    DEFAULT 0,
     FieldGoalMade   INTEGER     DEFAULT 0,
@@ -63,6 +113,7 @@ CREATE TABLE Players (
     Blocks          INTEGER     DEFAULT 0,
     Turnovers       INTEGER     DEFAULT 0,
     Points          INTEGER     DEFAULT 0,
-    PRIMARY KEY (PlayerID, PlayerYear),
-    FOREIGN KEY (TeamID) REFERENCES Teams(TeamID)
+    PRIMARY KEY (PlayerID, TeamID, SeasonStartYear),
+    FOREIGN KEY (PlayerID) REFERENCES Players(PlayerID),
+    FOREIGN KEY (TeamID, SeasonStartYear) REFERENCES TeamSeasons(TeamID, SeasonStartYear)
 );
