@@ -32,7 +32,7 @@ python server.py
 
 ## Step 7: Visit 127.0.0.1:5000 in your browser
 
-# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+***
 
 ## Current Features -- Milestone 1:
 
