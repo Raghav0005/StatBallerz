@@ -8,12 +8,6 @@ def parse_sql_shell_output():
     filename = ".results/results.out"
     with open(filename, 'r', encoding='utf-8') as file:
         lines = file.readlines()
-    
-    # Remove divider line (e.g., ----+-----+----)
-    lines = [line.rstrip('\n') for line in lines if not re.match(r'^\s*-+\+-+', line)]
-
-    # Remove footer line like "(3 rows)"
-    lines = [line for line in lines if not re.match(r'^\(\d+ rows?\)', line.strip())]
 
     if not lines:
         return []
