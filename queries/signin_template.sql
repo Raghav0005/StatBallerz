@@ -1,1 +1,1 @@
-select count(*) from Users where Username = PLACEHOLDER and PW = PLACEHOLDER;
+select count(*) as cnt from Users where Username = 'PLACEHOLDER' and PW = 'PLACEHOLDER';

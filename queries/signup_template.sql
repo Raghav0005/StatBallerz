@@ -1,1 +1,1 @@
-insert into Users (Username, PW) values (PLACEHOLDER, PLACEHOLDER);
+insert into Users (Username, PW) values ('PLACEHOLDER', 'PLACEHOLDER');

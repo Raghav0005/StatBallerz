@@ -1,2 +1,5 @@
-DB21005E  An error occurred while accessing the file "a1/2.sql".
+DB21034E  The command was processed as an SQL statement because it was not a 
+valid Command Line Processor command.  During SQL processing it returned:
+SQL0206N  "HELLO@123.COM" is not valid in the context where it is used.  
+SQLSTATE=42703
 

@@ -12,7 +12,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/home" element={<SearchPage />} /> {/* Optional "main app" page after login */}
+        <Route path="/home" element={<SearchPage />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

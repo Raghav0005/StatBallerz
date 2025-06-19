@@ -1,19 +1,30 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import bgImg from './../assets/nba.jpg';
+import { signup } from '../api';
 
 export default function Signup() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirm) {
       alert('Passwords do not match!');
       return;
     }
-    console.log('Signup', { email, password });
+
+    console.log('Signup', { username, password });
+
+    try {
+      const result = await signup(username, password);
+      console.log('Signup Success!', result);
+      alert('✅ Signup successful! You can now log in.');
+
+    } catch (err) {
+      console.error('Signup failed:', err);
+    }
   };
 
   return (
@@ -33,14 +44,14 @@ export default function Signup() {
         className="relative z-10 bg-white shadow-xl rounded-2xl px-8 py-10 w-full max-w-md"
       >
         <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
-          Join StatBallerZ 🏀 LEBROOOONNNNNNN
+          Join StatBallerZ 🏀
         </h2>
 
         <input
-          type="email"
-          placeholder="you@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           className="w-full mb-4 px-4 py-2 border border-gray-300 rounded-xl"
           required
         />

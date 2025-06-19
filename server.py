@@ -24,6 +24,7 @@ def parse_sql_shell_output():
         values = [val.strip() for val in line.split('|')]
         row = dict(zip(columns, values))
         results.append(row)
+    print(results)
 
     return results
 
@@ -58,6 +59,7 @@ def signup():
     with open(".tmp.sql", "w") as f:
         f.write(new_query)
     os.system("./runSqlFile.sh .tmp.sql")
+    print(data)
     results = parse_sql_shell_output()
     print(results)
     # replace with api response after parsing results.out
@@ -71,13 +73,20 @@ def signin():
 
     line = str_data.split("PLACEHOLDER")
     new_query = line[0] + data["username"] + line[1] + data["password"] + line[2]
+    
     with open(".tmp.sql", "w") as f:
         f.write(new_query)
+
+    # run SQL
     os.system("./runSqlFile.sh .tmp.sql")
+
     results = parse_sql_shell_output()
-    print(results)
-    # replace with api response after parsing results.out
-    return jsonify(results)
+    print("Signin results:", results)
+
+    if results[0]['CNT'] == '1':
+        return jsonify({"success": 1})
+    else:
+        return jsonify({"success": 0})
 
 if __name__ == "__main__":
     os.system("./setupSchema.sh")
