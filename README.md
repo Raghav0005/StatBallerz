@@ -26,6 +26,6 @@ pip install flask
 ```
 python server.py
 ```
-## Step 6: To use the app, use port forwarding (presumably using vscode) to route port 5000 on the student server to port 5000 on your machine
+## Step 6: To use the app, use port forwarding (automatically done if using vscode) to route port 5000 on the student server to port 5000 on your machine
 
 ## Step 7: Visit 127.0.0.1:5000 in your browser
