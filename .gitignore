@@ -1,0 +1,4 @@
+.results
+*.file
+venv/
+.tmp.sql

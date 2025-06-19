@@ -1,0 +1,1 @@
+select count(*) as cnt from Users where Username = 'PLACEHOLDER' and PW = 'PLACEHOLDER';

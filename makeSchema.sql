@@ -70,8 +70,9 @@ CREATE TABLE Teams (
 );
 
 CREATE TABLE Player (
-    PlayerID INTEGER NOT NULL,
+    PlayerID        INTEGER NOT NULL,
     PName           VARCHAR(100) NOT NULL,
+    PlayerAge       INTEGER     NOT NULL,
     GamesPlayed     INTEGER     DEFAULT 0,
     FieldGoalAttempt INTEGER    DEFAULT 0,
     FieldGoalMade   INTEGER     DEFAULT 0,
@@ -88,6 +89,7 @@ CREATE TABLE Player (
     PRIMARY KEY (PlayerID)
 );
 
+-- Create a junction table to associate players with teams
 CREATE TABLE HasPlayer (
     PlayerID INTEGER NOT NULL,
     TeamID INTEGER NOT NULL,

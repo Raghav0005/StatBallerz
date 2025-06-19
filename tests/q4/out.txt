@@ -1,0 +1,8 @@
+DB21034E  The command was processed as an SQL statement because it was not a 
+valid Command Line Processor command.  During SQL processing it returned:
+SQL0803N  An error or warning occurred.  One or more values in the INSERT 
+statement, UPDATE statement, or foreign key update caused by a DELETE 
+statement are not valid because the primary key, unique constraint or unique 
+index identified by "2" constrains table "ATSHAH.USERS" from having duplicate 
+values for the index key.  SQLSTATE=23505
+
