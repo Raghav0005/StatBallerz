@@ -106,3 +106,12 @@ CREATE TABLE HasPlayer (
     FOREIGN KEY (PlayerID) REFERENCES Player(PlayerID) ON DELETE CASCADE,
     FOREIGN KEY (TeamID) REFERENCES Teams(TeamID) ON DELETE CASCADE
 );
+
+CREATE VIEW LEADERBOARD AS
+SELECT Users.Username, MAX(AttemptScore) AS MaxScore
+FROM
+    Users
+JOIN
+    QuizAttempts ON Users.UserID = QuizAttempts.UserID
+GROUP BY Username
+-- ORDER BY DURING THE SELECT QUERY
