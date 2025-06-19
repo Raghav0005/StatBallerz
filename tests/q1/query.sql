@@ -1,1 +1,1 @@
-SELECT COUNT(*) as cnt FROM Users WHERE Username = 'Joe' and PW = 'Mama';
+SELECT COUNT(*) as cnt FROM Users WHERE Username = 'user1' and PW = 'password1';

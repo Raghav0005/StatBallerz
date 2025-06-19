@@ -68,18 +68,15 @@ CREATE TABLE QuizAttemptItems (
 );
 
 CREATE TABLE Teams (
-    TeamID   INTEGER NOT NULL
-                GENERATED ALWAYS AS IDENTITY 
-                  (START WITH 1, INCREMENT BY 1),
+    TeamID   INTEGER NOT NULL,
     TeamName VARCHAR(100) NOT NULL,
     PRIMARY KEY (TeamID)
 );
 
 CREATE TABLE Player (
-    PlayerID        INTEGER NOT NULL
-                       GENERATED ALWAYS AS IDENTITY 
-                         (START WITH 1, INCREMENT BY 1),
+    PlayerID        INTEGER NOT NULL,
     PName           VARCHAR(100) NOT NULL,
+    PlayerAge       INTEGER     NOT NULL,
     GamesPlayed     INTEGER     DEFAULT 0,
     FieldGoalAttempt INTEGER    DEFAULT 0,
     FieldGoalMade   INTEGER     DEFAULT 0,
@@ -96,9 +93,11 @@ CREATE TABLE Player (
     PRIMARY KEY (PlayerID)
 );
 
+-- Create a junction table to associate players with teams
 CREATE TABLE HasPlayer (
     PlayerID INTEGER NOT NULL,
     TeamID INTEGER NOT NULL,
-    PRIMARY KEY (PlayerID),
-    FOREIGN KEY (PlayerID) REFERENCES Player(PlayerID)
+    PRIMARY KEY (PlayerID, TeamID),
+    FOREIGN KEY (PlayerID) REFERENCES Player(PlayerID),
+    FOREIGN KEY (TeamID) REFERENCES Teams(TeamID)
 );
