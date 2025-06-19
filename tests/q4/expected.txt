@@ -1,0 +1,2 @@
+DB20000I  The SQL command completed successfully.
+
