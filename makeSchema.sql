@@ -31,11 +31,11 @@ CREATE TABLE Author (
 );
 
 CREATE TABLE Answers (
-    AnswerID   INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
     QuestionID INTEGER NOT NULL,
+    AnswerNumber INTEGER NOT NULL CHECK(AnswerNumber <= 4 and AnswerNumber >= 1),
     ResponseText VARCHAR(200) NOT NULL,
     IsCorrect      BOOLEAN NOT NULL,
-    PRIMARY KEY (AnswerID),
+    PRIMARY KEY (QuestionID, AnswerNumber),
     FOREIGN KEY (QuestionID) REFERENCES Questions(QuestionID) ON DELETE CASCADE
 );
 
@@ -50,10 +50,10 @@ CREATE TABLE QuizAttempts (
 CREATE TABLE QuizAttemptItems (
     AttemptID INTEGER NOT NULL,
     QuestionID INTEGER NOT NULL,
-    AnswerID INTEGER NOT NULL,
+    AnswerNumber INTEGER NOT NULL CHECK(AnswerNumber <= 4 and AnswerNumber >= 1),
     PRIMARY KEY (AttemptID, QuestionID),
     FOREIGN KEY (QuestionID) REFERENCES Questions(QuestionID) ON DELETE CASCADE,
-    FOREIGN KEY (AnswerID) REFERENCES Answers(AnswerID) ON DELETE CASCADE,
+    FOREIGN KEY (QuestionID, AnswerNumber) REFERENCES Answers(QuestionID, AnswerNumber) ON DELETE CASCADE,
     FOREIGN KEY (AttemptID) REFERENCES QuizAttempts(AttemptID) ON DELETE CASCADE
 );
 
