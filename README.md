@@ -10,6 +10,10 @@ ssh linux.student.cs.uwaterloo.ca
 ```
 git clone git@github.com:Raghav0005/StatBallerz.git
 ```
+OR
+```
+git clone https://github.com/Raghav0005/StatBallerz.git
+```
 ## Step 3: Go into client directory, install dependencies and build
 ```
 cd StatBallerz/client
