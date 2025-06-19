@@ -12,7 +12,7 @@ DROP TABLE IF EXISTS Teams;
 CREATE TABLE Users (
     UserID INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
     Username VARCHAR(100) NOT NULL UNIQUE,
-    PasswordHash VARCHAR(255) NOT NULL,
+    PW VARCHAR(255) NOT NULL,
     PRIMARY KEY (UserID)
 );
 
@@ -43,6 +43,13 @@ CREATE TABLE QAMap (
     FOREIGN KEY (AnswerID) REFERENCES Answers(AnswerID)
 );
 
+-- CREATE TABLE hasAttempted (
+--     AttemptID INTEGER NOT NULL,
+--     UserID INTEGER NOT NULL,
+--     PRIMARY KEY (AttemptID),
+--     FOREIGN KEY (UserID) REFERENCES Users(UserID)
+-- );
+
 CREATE TABLE QuizAttempts (
     AttemptID INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
     UserID INTEGER NOT NULL,
@@ -69,7 +76,10 @@ CREATE TABLE Teams (
 );
 
 CREATE TABLE Player (
-    PlayerID INTEGER NOT NULL,
+    PlayerID        INTEGER NOT NULL
+                       GENERATED ALWAYS AS IDENTITY 
+                         (START WITH 1, INCREMENT BY 1),
+    PName           VARCHAR(100) NOT NULL,
     GamesPlayed     INTEGER     DEFAULT 0,
     FieldGoalAttempt INTEGER    DEFAULT 0,
     FieldGoalMade   INTEGER     DEFAULT 0,
@@ -87,11 +97,8 @@ CREATE TABLE Player (
 );
 
 CREATE TABLE HasPlayer (
-    PlayerID        INTEGER NOT NULL
-                       GENERATED ALWAYS AS IDENTITY 
-                         (START WITH 1, INCREMENT BY 1),
-    TeamID INTEGER NOT NULL REFERENCES Teams(TeamID),
-    PName           VARCHAR(100) NOT NULL,
+    PlayerID INTEGER NOT NULL,
+    TeamID INTEGER NOT NULL,
     PRIMARY KEY (PlayerID),
     FOREIGN KEY (PlayerID) REFERENCES Player(PlayerID)
 );
