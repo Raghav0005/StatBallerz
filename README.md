@@ -49,7 +49,7 @@ git clone https://github.com/Raghav0005/StatBallerz.git
 ```
 ### Step 3: Testing the database
 ```
-./runSqlCmd tests/q1/query.sql # run any file you want, based on the folders in tests
+./runSqlCmd.sh tests/q1/query.sql # run any file you want, based on the folders in tests
 ```
 
 ***
