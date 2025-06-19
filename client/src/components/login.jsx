@@ -17,6 +17,7 @@ export default function Login() {
     console.log(result);
 
     if (result.success === 1) navigate('/home');
+    else alert('❌ Login Unsuccessful. Account does not exist with the username/password combination');
   };
 
   return (
