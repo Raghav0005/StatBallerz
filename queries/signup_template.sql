@@ -1,0 +1,1 @@
+insert into Users (Username, PW) values (PLACEHOLDER, PLACEHOLDER);
