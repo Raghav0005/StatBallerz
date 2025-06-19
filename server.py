@@ -48,7 +48,7 @@ def test():
     return f"{len(results)}"
 
 @app.route("/api/signup", methods=["POST"])
-def test():
+def signup():
     form_data = request.form
     data =  {key: form_data[key] for key in form_data}
     str_data = load_str("signup_template")
