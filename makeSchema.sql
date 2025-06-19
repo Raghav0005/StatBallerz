@@ -35,7 +35,7 @@ CREATE TABLE Answers (
     QuestionID INTEGER NOT NULL,
     ResponseText VARCHAR(200) NOT NULL,
     IsCorrect      BOOLEAN NOT NULL,
-    PRIMARY KEY (AnswerID, QuestionID),
+    PRIMARY KEY (AnswerID),
     FOREIGN KEY (QuestionID) REFERENCES Questions(QuestionID) ON DELETE CASCADE
 );
 
