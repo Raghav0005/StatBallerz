@@ -7,10 +7,11 @@ DROP TABLE IF EXISTS Answers;
 DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS Player;
 DROP TABLE IF EXISTS Teams;
+DROP TABLE IF EXISTS HasPlayer;
 
 CREATE TABLE Users (
     UserID INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
-    Username VARCHAR(100) NOT NULL UNIQUE,
+    Username VARCHAR(100) NOT NULL,
     PW VARCHAR(255) NOT NULL,
     PRIMARY KEY (UserID)
 );
@@ -63,19 +64,14 @@ CREATE TABLE QuizAttemptItems (
 );
 
 CREATE TABLE Teams (
-    TeamID   INTEGER NOT NULL
-                GENERATED ALWAYS AS IDENTITY 
-                  (START WITH 1, INCREMENT BY 1),
+    TeamID   INTEGER NOT NULL,
     TeamName VARCHAR(100) NOT NULL,
     PRIMARY KEY (TeamID)
 );
 
 CREATE TABLE Player (
-    PlayerID        INTEGER NOT NULL
-                       GENERATED ALWAYS AS IDENTITY 
-                         (START WITH 1, INCREMENT BY 1),
+    PlayerID INTEGER NOT NULL,
     PName           VARCHAR(100) NOT NULL,
-    TeamID          INTEGER NOT NULL,
     GamesPlayed     INTEGER     DEFAULT 0,
     FieldGoalAttempt INTEGER    DEFAULT 0,
     FieldGoalMade   INTEGER     DEFAULT 0,
@@ -89,7 +85,14 @@ CREATE TABLE Player (
     Blocks          INTEGER     DEFAULT 0,
     Turnovers       INTEGER     DEFAULT 0,
     Points          INTEGER     DEFAULT 0,
-    PRIMARY KEY (PlayerID),
+    PRIMARY KEY (PlayerID)
+);
+
+CREATE TABLE HasPlayer (
+    PlayerID INTEGER NOT NULL,
+    TeamID INTEGER NOT NULL,
+    PRIMARY KEY (PlayerID, TeamID),
+    FOREIGN KEY (PlayerID) REFERENCES Player(PlayerID) ON DELETE CASCADE,
     FOREIGN KEY (TeamID) REFERENCES Teams(TeamID) ON DELETE CASCADE
 );
 
