@@ -44,7 +44,6 @@ CREATE TABLE QuizAttemptItems (
     QuestionID INTEGER NOT NULL,
     AnswerNumber INTEGER NOT NULL CHECK(AnswerNumber <= 4 and AnswerNumber >= 1),
     PRIMARY KEY (AttemptID, QuestionID),
-    FOREIGN KEY (QuestionID) REFERENCES Questions(QuestionID) ON DELETE CASCADE,
     FOREIGN KEY (QuestionID, AnswerNumber) REFERENCES Answers(QuestionID, AnswerNumber) ON DELETE CASCADE,
     FOREIGN KEY (AttemptID) REFERENCES QuizAttempts(AttemptID) ON DELETE CASCADE
 );
