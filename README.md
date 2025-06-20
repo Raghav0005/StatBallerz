@@ -58,7 +58,8 @@ git clone https://github.com/Raghav0005/StatBallerz.git
 
 The current iteration of the project as of Milestone 1 has a successfully set up frontend (React + Javascript + Vite) and backend (Flask). We have successfully integrated 1-2 simple features/functionalities, being the login and the signup, which will serve as a starting point for completing the rest of our project! 
 
-Our SQL schema's have been appropriately defined and created, and the frontend can successfully access our database. The login and signup pages are done and have been created, fully functioning with our database. Once a user signs up and logs into their newly created account, a preliminary search/home pages is visible that can be seen on successfully login.
+Our SQL schema's have been appropriately defined and created, and the frontend can successfully access our database. The login and signup pages are done and have been created, fully functioning with our database. Once a user signs up and logs into their newly created account, a preliminary search/home pages is visible that can be seen on successfully login. 
+(Note that there may be some edge cases with signups/login logic, which will be revised and improved in later versions of our application. However, the current login/signup is sufficient to show/test database connectivity with our application!)
 
 Home/Login Page: <br/>
 <img width="500" alt="Screen Shot 2025-06-19 at 3 20 17 PM" src="https://github.com/user-attachments/assets/3018aa47-03e0-4ba8-9116-a4ca98acaf03" />
