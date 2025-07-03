@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Navbar from './navbar';
 
 export default function SearchPage() {
   const [query, setQuery] = useState('');
@@ -10,17 +11,7 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 bg-white shadow-md z-20">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="text-2xl font-bold text-blue-600">StatBallerZ</div>
-          <ul className="flex space-x-8 text-gray-700 font-semibold">
-            <li className="hover:text-blue-600 cursor-pointer transition">Search</li>
-            <li className="hover:text-blue-600 cursor-pointer transition">Quiz</li>
-          </ul>
-        </div>
-      </nav>
-      <div className="h-16"></div>
+      <Navbar></Navbar>
 
       {/* Search bar */}
       <section className="max-w-3xl mx-auto mt-8 px-6">

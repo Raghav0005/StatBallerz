@@ -1,1 +1,1 @@
-
+select count(*) as cnt from Users where Username = 'hello' and PW = '123';
