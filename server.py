@@ -88,7 +88,46 @@ def signin():
     else:
         return jsonify({"success": 0})
 
+@app.route("/api/user", methods=["DELETE"])
+def delete_user():
+    params = request.args
+    params_map = {key: params[key] for key in params}
+    user_id = params_map.get("username")
+    if not user_id:
+        return jsonify({"success: 0"})
+    str_data = load_str("delete_user_template")
+    line = str_data.split("PLACEHOLDER")
+    new_query = line[0] + user_id + line[1]
+    with open(".tmp.sql", "w") as f:
+        f.write(new_query)
+    os.system("./runSqlFile.sh .tmp.sql")
+    
+    results = parse_sql_shell_output()
+    print("Delete user results:", results)
+    return jsonify(results)
+    
+
 if __name__ == "__main__":
     os.system("./setupSchema.sh")
     os.system("mkdir .results")
+    
+    # test user signup + delete
+    # with app.test_client() as client:
+    #     response = client.post(
+    #         "/api/signup",
+    #         data={"username": "testuser", "password": "password"},
+    #         content_type='application/x-www-form-urlencoded'
+    #     )
+    
+    #     os.system('./runSqlCmd.sh .listTables.sql')
+    #     results = parse_sql_shell_output()
+    #     print("User results:", results)
+        
+    #     response = client.delete('/api/user?username=testuser')
+    #     print(response.json)
+        
+    #     os.system('./runSqlCmd.sh .listTables.sql')
+    #     results = parse_sql_shell_output()
+    #     print("User results:", results)
+        
     app.run(debug=True)
