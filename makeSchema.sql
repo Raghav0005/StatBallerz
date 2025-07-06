@@ -35,24 +35,6 @@ CREATE TABLE Answers (
     FOREIGN KEY (QuestionID) REFERENCES Questions(QuestionID) ON DELETE CASCADE
 );
 
-CREATE TABLE PlayerAnswer (
-    QuestionID INTEGER NOT NULL,
-    AnswerNumber INTEGER NOT NULL CHECK(AnswerNumber <= 4 and AnswerNumber >= 1),
-    PlayerID INTEGER NOT NULL,
-    PRIMARY KEY (QuestionID, AnswerNumber),
-    FOREIGN KEY (QuestionID, AnswerNumber) REFERENCES Answers(QuestionID, AnswerNumber) ON DELETE CASCADE,
-    FOREIGN KEY (PlayerID) REFERENCES Player(PlayerID) ON DELETE CASCADE
-);
-
-CREATE TABLE GameAnswer (
-    QuestionID INTEGER NOT NULL,
-    AnswerNumber INTEGER NOT NULL CHECK(AnswerNumber <= 4 and AnswerNumber >= 1),
-    GameID INTEGER NOT NULL,
-    PRIMARY KEY (QuestionID, AnswerNumber),
-    FOREIGN KEY (QuestionID, AnswerNumber) REFERENCES Answers(QuestionID, AnswerNumber) ON DELETE CASCADE,
-    FOREIGN KEY (GameID) REFERENCES Games(GameID) ON DELETE CASCADE
-);
-
 CREATE TABLE QuizAttempts (
     AttemptID INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
     UserID INTEGER NOT NULL,
@@ -137,7 +119,25 @@ CREATE TABLE HasPlayer (
     FOREIGN KEY (TeamID) REFERENCES Teams(TeamID) ON DELETE CASCADE
 );
 
-CREATE VIEW LEADERBOARD AS
+CREATE TABLE PlayerAnswer (
+    QuestionID INTEGER NOT NULL,
+    AnswerNumber INTEGER NOT NULL CHECK(AnswerNumber <= 4 and AnswerNumber >= 1),
+    PlayerID INTEGER NOT NULL,
+    PRIMARY KEY (QuestionID, AnswerNumber),
+    FOREIGN KEY (QuestionID, AnswerNumber) REFERENCES Answers(QuestionID, AnswerNumber) ON DELETE CASCADE,
+    FOREIGN KEY (PlayerID) REFERENCES Player(PlayerID) ON DELETE CASCADE
+);
+
+CREATE TABLE GameAnswer (
+    QuestionID INTEGER NOT NULL,
+    AnswerNumber INTEGER NOT NULL CHECK(AnswerNumber <= 4 and AnswerNumber >= 1),
+    GameID INTEGER NOT NULL,
+    PRIMARY KEY (QuestionID, AnswerNumber),
+    FOREIGN KEY (QuestionID, AnswerNumber) REFERENCES Answers(QuestionID, AnswerNumber) ON DELETE CASCADE,
+    FOREIGN KEY (GameID) REFERENCES Games(GameID) ON DELETE CASCADE
+);
+
+CREATE OR REPLACE VIEW LEADERBOARD AS
 SELECT Users.Username, MAX(AttemptScore) AS MaxScore
 FROM
     Users
@@ -146,7 +146,7 @@ JOIN
 GROUP BY Username;
 -- ORDER BY DURING THE SELECT QUERY - CANNOT INCLUDE ORDER BY IN VIEW DEFINITION
 
-CREATE VIEW ALL_PLAYER_INFO AS
+CREATE OR REPLACE VIEW ALL_PLAYER_INFO AS
 SELECT
     Player.PlayerID,
     Player.PName,
@@ -187,7 +187,7 @@ SELECT
     AVG(PlayedIn.Turnovers) AS AverageTurnovers
 FROM
     Player
-JOIN
+LEFT JOIN
     PlayedIn ON Player.PlayerID = PlayedIn.PlayerID
 GROUP BY
     Player.PlayerID,
@@ -202,8 +202,7 @@ GROUP BY
     Player.Country,
     Player.School;
 
-
-CREATE VIEW ALL_GAME_INFO AS
+CREATE OR REPLACE VIEW ALL_GAME_INFO AS
 SELECT
     Games.GameID,
     Games.GameDate,
