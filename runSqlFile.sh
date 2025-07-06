@@ -8,4 +8,4 @@ source ~db2inst2/sqllib/db2profile
 # connect to database
 db2 connect to cs348
 
-db2 -tf $1 > .results/results.out
+db2 -tf $1
