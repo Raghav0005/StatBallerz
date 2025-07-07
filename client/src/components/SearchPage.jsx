@@ -14,7 +14,6 @@ export default function SearchPage() {
     e.preventDefault();
 
     if (!query) {
-      alert("Please enter a player name to search.");
       return;
     }
 

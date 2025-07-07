@@ -126,12 +126,12 @@ def delete_user():
 @app.route("/api/search")
 def searchplayer():
     params = request.args
-    data = {key: params[key] for key in params}
+    params_map = {key: params[key] for key in params}
     player_name = params_map.get("pname")
     if not player_name:
         return jsonify({"error": "Player name is required"}), 400
     replacements = {
-        "{{PLAYER NAME}}": data["pname"],
+        "{{PLAYER NAME}}": "",
     }
     results = run_query_from_template("search_player_template.sql", replacements)
     
