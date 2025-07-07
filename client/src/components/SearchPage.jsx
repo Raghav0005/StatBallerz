@@ -1,21 +1,27 @@
-import { useState } from 'react';
-import Navbar from './navbar';
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { Navigate } from "react-router-dom";
 
 export default function SearchPage() {
-  const [query, setQuery] = useState('');
+  const { user } = useAuth();
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
+
+  const [query, setQuery] = useState("");
 
   const handleSearch = (e) => {
     e.preventDefault();
-    console.log('Search query:', query);
+    console.log("Search query:", query);
   };
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar></Navbar>
-
-      {/* Search bar */}
       <section className="max-w-3xl mx-auto mt-8 px-6">
-        <form onSubmit={handleSearch} className="flex shadow-lg rounded-lg overflow-hidden border border-gray-300 bg-white">
+        <form
+          onSubmit={handleSearch}
+          className="flex shadow-lg rounded-lg overflow-hidden border border-gray-300 bg-white"
+        >
           <input
             type="text"
             placeholder="Search stats, players, teams..."
@@ -32,9 +38,10 @@ export default function SearchPage() {
         </form>
       </section>
 
-      {/* Content placeholder */}
       <main className="max-w-3xl mx-auto mt-12 px-6 text-gray-600">
-        <p>Search for players, stats, or teams above and results will show here.</p>
+        <p>
+          Search for players, stats, or teams above and results will show here.
+        </p>
       </main>
     </div>
   );
