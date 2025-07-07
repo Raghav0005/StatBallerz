@@ -17,6 +17,7 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-screen bg-gray-100">
+      <div className="h-16"></div>
       <section className="max-w-3xl mx-auto mt-8 px-6">
         <form
           onSubmit={handleSearch}
