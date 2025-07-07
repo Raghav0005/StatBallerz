@@ -10,9 +10,35 @@ export default function SearchPage() {
 
   const [query, setQuery] = useState("");
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    console.log("Search query:", query);
+
+    if (!query) {
+      alert("Please enter a player name to search.");
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/search?pname=${encodeURIComponent(query)}`);
+      const data = await res.json();
+
+      if (data.error) {
+        alert(`❌ Search failed: ${data.error}`);
+        return;
+      }
+
+      // Assuming `data.results` contains the array of players
+      if (data.results && data.results.length > 0) {
+        console.log("Found players:", data.results);
+        setSearchResults(data.results);
+      } else {
+        alert("No players found.");
+      }
+
+    } catch (err) {
+      console.error("Search error:", err);
+      alert("❌ An error occurred while searching. Please try again.");
+    }
   };
 
   return (
@@ -33,6 +59,7 @@ export default function SearchPage() {
           <button
             type="submit"
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 font-semibold transition"
+            onSubmit={handleSearch}
           >
             Search
           </button>
