@@ -123,6 +123,24 @@ def delete_user():
     os.system('./runSqlCmd.sh .listUserTable.sql')
     return jsonify({"message": "User deleted successfully"}), 200
     
+@app.route("/api/search")
+def searchplayer():
+    params = request.args
+    data = {key: params[key] for key in params}
+    player_name = params_map.get("pname")
+    if not player_name:
+        return jsonify({"error": "Player name is required"}), 400
+    replacements = {
+        "{{PLAYER NAME}}": data["pname"],
+    }
+    results = run_query_from_template("search_player_template.sql", replacements)
+    
+    print("Search results:", results)
+    os.system('./runSqlCmd.sh .listUserTable.sql')
+    return jsonify({
+        "message": "Successful Search of Player",
+        "results": results
+    }), 200
 
 if __name__ == "__main__":
     os.system("./setupSchema.sh")
