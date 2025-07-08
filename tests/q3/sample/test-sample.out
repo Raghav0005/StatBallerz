@@ -1,2 +1,4 @@
+DB21034E  The command was processed as an SQL statement because it was not a 
+valid Command Line Processor command.  During SQL processing it returned:
+SQL0204N  "DC3ZHANG.USER" is an undefined name.  SQLSTATE=42704
 
-DB21007E  End of file reached while reading the command.
