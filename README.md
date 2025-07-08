@@ -77,6 +77,6 @@ Successful Login: <br/>
 
 Password Change: <br/>
 ![86691A58-D517-4674-A9CB-F8E12CC9A7CA](https://github.com/user-attachments/assets/7353e282-8bcc-4b0e-9fc8-9b43582032bb)
-![86691A58-D517-4674-A9CB-F8E12CC9A7CA](https://github.com/user-attachments/assets/1b8d9177-e462-4479-bdc5-24c2f23b360f)
+![AF241A93-37C2-4784-8F6B-FDF98AD6F40B](https://github.com/user-attachments/assets/0adfbace-f068-4366-9533-8d0b522ffcf1)
 
 * Sample test data and test queries for our 4 basic features for Milestone 1 is in the 'test' folder
