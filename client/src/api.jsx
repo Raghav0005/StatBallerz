@@ -73,7 +73,7 @@ export async function searchPlayer(pname) {
   if (res.ok) {
     const data = await res.json();
     console.log('searchPlayer success:', data);
-    return { data };
+    return data;
   } else if (res.status === 400) {
     console.log('searchPlayer unauthorized');
     return { error: "Search string" };

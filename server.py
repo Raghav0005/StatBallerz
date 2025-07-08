@@ -159,7 +159,7 @@ def searchplayer():
     os.system('./runSqlCmd.sh .listUserTable.sql')
     return jsonify({
         "message": "Successful Search of Player",
-        "results": results[0]
+        "results": results
     }), 200
 
 if __name__ == "__main__":
