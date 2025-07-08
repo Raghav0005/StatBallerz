@@ -10,8 +10,8 @@ for dir in $(ls tests); do
 #   [ -d "$dir" ] || continue
 
   # Define paths
-  sql_file="tests/${dir}/query.sql"
-  out_file="tests/${dir}/out.txt"
+  sql_file="tests/${dir}/production/test-production.sql"
+  out_file="tests/${dir}/production/test-production.out"
 
   echo $out_file
 
@@ -20,6 +20,6 @@ for dir in $(ls tests); do
     echo "Running $sql_file..."
     db2 -tf "$sql_file" > "$out_file"
   else
-    echo "No query.sql found in $dir"
+    echo "No test-production.sql found in $dir"
   fi
 done

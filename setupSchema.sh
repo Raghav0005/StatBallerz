@@ -15,6 +15,7 @@ cat $populate_hasplayers >> .tmp.sql
 cat $populate_users >> .tmp.sql
 cat $populate_games >> .tmp.sql
 cat $populate_playedIn >> .tmp.sql
+cat insert_users.sql >> .tmp.sql
 
 # connect to database
 db2 connect to cs348
