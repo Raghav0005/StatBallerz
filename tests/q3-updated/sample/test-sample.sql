@@ -1,1 +1,1 @@
-DELETE FROM User u WHERE u.username = “user1”
+DELETE FROM User u WHERE u.username = 'user1'

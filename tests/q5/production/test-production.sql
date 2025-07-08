@@ -1,3 +1,3 @@
 UPDATE Users u
-SET u.PW = “HelloWorld123”
-WHERE u.username = “user50”;
+SET u.PW = 'HelloWorld123'
+WHERE u.username = 'user50';
