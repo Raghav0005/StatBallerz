@@ -61,12 +61,12 @@ CREATE TABLE Teams (
 CREATE TABLE Player (
     PlayerID INTEGER NOT NULL,
     PName VARCHAR(100) NOT NULL,
-    PlayerAge INTEGER NOT NULL,
-    Height INTEGER NOT NULL CHECK (Height >= 0),
-    BodyWeight INTEGER NOT NULL CHECK (BodyWeight >= 0),
-    DraftYear INTEGER NOT NULL,
-    DraftRound INTEGER NOT NULL CHECK (DraftRound >= 1),
-    DraftPick INTEGER NOT NULL CHECK (DraftPick >= 1),
+    BirthDate DATE NOT NULL,
+    Height INTEGER,
+    BodyWeight INTEGER,
+    DraftYear INTEGER,
+    DraftRound INTEGER,
+    DraftPick INTEGER,
     Country VARCHAR(100) NOT NULL,
     School VARCHAR(100),
     PRIMARY KEY (PlayerID)
@@ -75,7 +75,7 @@ CREATE TABLE Player (
 CREATE TABLE Games (
     GameID INTEGER NOT NULL,
     GameDate DATE NOT NULL,
-    GameType VARCHAR(50) NOT NULL CHECK (GameType IN ('Regular', 'Playoff')),
+    GameType VARCHAR(50) NOT NULL CHECK (GameType IN ('Regular Season', 'Playoffs')),
     Attendance INTEGER NOT NULL CHECK (Attendance >= 0),
     HomeTeamID INTEGER NOT NULL,
     AwayTeamID INTEGER NOT NULL,
@@ -113,7 +113,7 @@ CREATE TABLE PlayedIn (
 CREATE TABLE HasPlayer (
     PlayerID INTEGER NOT NULL,
     TeamID INTEGER NOT NULL,
-    PRIMARY KEY (PlayerID),
+    PRIMARY KEY (PlayerID, TeamID),
     FOREIGN KEY (PlayerID) REFERENCES Player(PlayerID) ON DELETE CASCADE,
     FOREIGN KEY (TeamID) REFERENCES Teams(TeamID) ON DELETE CASCADE
 );
@@ -149,7 +149,6 @@ CREATE OR REPLACE VIEW ALL_PLAYER_INFO AS
 SELECT
     Player.PlayerID,
     Player.PName,
-    Player.PlayerAge,
     Player.Height,
     Player.BodyWeight,
     Player.DraftYear,
@@ -191,7 +190,6 @@ LEFT JOIN
 GROUP BY
     Player.PlayerID,
     Player.PName,
-    Player.PlayerAge,
     Player.Height,
     Player.BodyWeight,
     Player.DraftYear,
