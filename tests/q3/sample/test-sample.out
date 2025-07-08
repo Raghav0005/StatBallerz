@@ -1,4 +1,3 @@
-DB21034E  The command was processed as an SQL statement because it was not a 
-valid Command Line Processor command.  During SQL processing it returned:
-SQL0204N  "DC3ZHANG.USER" is an undefined name.  SQLSTATE=42704
+SQL0100W  No row was found for FETCH, UPDATE or DELETE; or the result of a 
+query is an empty table.  SQLSTATE=02000
 

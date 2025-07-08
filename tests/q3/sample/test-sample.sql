@@ -1,1 +1,1 @@
-DELETE FROM User u WHERE u.Username = 'user1';
+DELETE FROM Users u WHERE u.Username = 'user1';

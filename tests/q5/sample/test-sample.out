@@ -1,2 +1,3 @@
-DB20000I  The SQL command completed successfully.
+SQL0100W  No row was found for FETCH, UPDATE or DELETE; or the result of a 
+query is an empty table.  SQLSTATE=02000
 

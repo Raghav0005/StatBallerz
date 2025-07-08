@@ -1,1 +1,0 @@
-INSERT INTO Users (Username, PW) VALUES ('arne', '240');
