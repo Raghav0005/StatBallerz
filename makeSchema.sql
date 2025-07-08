@@ -136,6 +136,14 @@ CREATE TABLE GameAnswer (
     FOREIGN KEY (GameID) REFERENCES Games(GameID) ON DELETE CASCADE
 );
 
+-- Indexes
+CREATE INDEX idx_games_date ON Games(GameDate);
+
+CREATE INDEX idx_playedin_points ON PlayedIn(Points);
+CREATE INDEX idx_playedin_assists ON PlayedIn(Assists);
+CREATE INDEX idx_playedin_rebounds ON PlayedIn(TotalRebounds);
+
+-- Views
 CREATE OR REPLACE VIEW LEADERBOARD AS
 SELECT Users.Username, MAX(AttemptScore) AS MaxScore
 FROM
