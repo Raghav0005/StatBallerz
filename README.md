@@ -75,4 +75,8 @@ Successful Login: <br/>
 <img width="500" alt="Screen Shot 2025-06-19 at 3 24 54 PM" src="https://github.com/user-attachments/assets/5598e06d-2798-4acc-bab8-0fac156d912f" />
 <img width="500" alt="Screen Shot 2025-06-19 at 3 25 09 PM" src="https://github.com/user-attachments/assets/e0e6dca0-e6c8-4ff8-a0ae-8bd680e6050c" />
 
+Password Change: <br/>
+![86691A58-D517-4674-A9CB-F8E12CC9A7CA](https://github.com/user-attachments/assets/7353e282-8bcc-4b0e-9fc8-9b43582032bb)
+![86691A58-D517-4674-A9CB-F8E12CC9A7CA](https://github.com/user-attachments/assets/1b8d9177-e462-4479-bdc5-24c2f23b360f)
+
 * Sample test data and test queries for our 4 basic features for Milestone 1 is in the 'test' folder
