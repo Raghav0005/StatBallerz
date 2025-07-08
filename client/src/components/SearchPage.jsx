@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
+import { searchPlayer } from "../api";
 
 export default function SearchPage() {
   const { user } = useAuth();
@@ -18,8 +19,7 @@ export default function SearchPage() {
     }
 
     try {
-      const res = await fetch(`/api/search?pname=${encodeURIComponent(query)}`);
-      const data = await res.json();
+      const data = await searchPlayer(query);
 
       if (data.error) {
         alert(`❌ Search failed: ${data.error}`);
@@ -27,6 +27,7 @@ export default function SearchPage() {
       }
 
       // Assuming `data.results` contains the array of players
+      console.log(data);
       if (data.results && data.results.length > 0) {
         console.log("Found players:", data.results);
         setSearchResults(data.results);

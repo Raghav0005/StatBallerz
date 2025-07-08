@@ -111,18 +111,38 @@ def signin():
 def delete_user():
     params = request.args
     params_map = {key: params[key] for key in params}
-    user_id = params_map.get("username")
-    if not user_id:
+    username = params_map.get("username")
+    if not username:
         return jsonify({"error": "Username parameter is required"}), 400
     replacements = {
-        "{{USERNAME}}": user_id
+        "{{USERNAME}}": username
     }
     results = run_query_from_template("delete_user_template.sql", replacements)
 
     print("Delete user results:", results)
     os.system('./runSqlCmd.sh .listUserTable.sql')
     return jsonify({"message": "User deleted successfully"}), 200
-    
+
+@app.route("/api/password", methods=["POST"])
+def update_password():
+    params = request.args
+    params_map = {key: params[key] for key in params}
+    username = params_map.get("username")
+    pwd = params_map.get("password")
+    if not username:
+        return jsonify({"error": "Username parameter is required"}), 400
+    if not pwd:
+        return jsonify({"error": "Password is required"}), 400
+    replacements = {
+        "{{USERNAME}}": username,
+        "{{PASSWORD}}": pwd,
+    }
+    results = run_query_from_template("update_user_password_template.sql", replacements)
+
+    print("Updated user password results:", results)
+    os.system('./runSqlCmd.sh .listUserTable.sql')
+    return jsonify({"message": "User password updated successfully"}), 200
+
 @app.route("/api/search")
 def searchplayer():
     params = request.args
@@ -131,7 +151,7 @@ def searchplayer():
     if not player_name:
         return jsonify({"error": "Player name is required"}), 400
     replacements = {
-        "{{PLAYER NAME}}": "",
+        "{{PLAYER NAME}}": player_name,
     }
     results = run_query_from_template("search_player_template.sql", replacements)
     
@@ -139,7 +159,7 @@ def searchplayer():
     os.system('./runSqlCmd.sh .listUserTable.sql')
     return jsonify({
         "message": "Successful Search of Player",
-        "results": results
+        "results": results[0]
     }), 200
 
 if __name__ == "__main__":

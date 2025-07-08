@@ -1,0 +1,1 @@
+UPDATE Users SET PW = '{{PASSWORD}}' WHERE Username = '{{USERNAME}}';

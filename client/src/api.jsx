@@ -51,3 +51,34 @@ export async function deleteUser(username) {
     throw new Error("Delete user failed");
   }
 }
+
+export async function updatePassword(username, password) {
+  const res = await fetch(`/api/password?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`, {
+    method: 'POST'
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    console.log('updatePassword success:', data);
+    return { data };
+  } else {
+    console.error('updatePassword failed:', res.status);
+    throw new Error("Update password failed");
+  }
+}
+
+export async function searchPlayer(pname) {
+  const res = await fetch(`/api/search?pname=${encodeURIComponent(pname)}`);
+  
+  if (res.ok) {
+    const data = await res.json();
+    console.log('searchPlayer success:', data);
+    return { data };
+  } else if (res.status === 400) {
+    console.log('searchPlayer unauthorized');
+    return { error: "Search string" };
+  } else {
+    console.error('searchPlayer failed:', res.status);
+    throw new Error("Search failed");
+  }
+}
