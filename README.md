@@ -80,7 +80,7 @@ Password Change: <br/>
 <img width="500" alt="Screen Shot 2025-06-19 at 3 24 54 PM" src="https://github.com/user-attachments/assets/7353e282-8bcc-4b0e-9fc8-9b43582032bb" />
 
 Account Deletion: <br/>
-<img width="500" alt="Screen Shot 2025-06-19 at 3 24 54 PM" src="https://github.com/user-attachments/assets/2bc0258f-63e1-4128-963e-7b9b8a829978" />
 <img width="500" alt="Screen Shot 2025-06-19 at 3 24 54 PM" src="https://github.com/user-attachments/assets/60329cc1-d163-4020-96f7-ccf89516f1cf" />
+<img width="500" alt="Screen Shot 2025-06-19 at 3 24 54 PM" src="https://github.com/user-attachments/assets/2bc0258f-63e1-4128-963e-7b9b8a829978" />
 
 * Sample test data and test queries for our 4 basic features for Milestone 1 is in the 'test' folder
