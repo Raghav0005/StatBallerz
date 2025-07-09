@@ -82,7 +82,7 @@ Account Deletion: <br/>
 <img width="500" alt="Screen Shot 2025-06-19 at 3 24 54 PM" src="https://github.com/user-attachments/assets/60329cc1-d163-4020-96f7-ccf89516f1cf" />
 <img width="500" alt="Screen Shot 2025-06-19 at 3 24 54 PM" src="https://github.com/user-attachments/assets/2bc0258f-63e1-4128-963e-7b9b8a829978" />
 
-Search for Player (Additional Feature):
+Search for Player (Additional Feature on top of M2):
 <img width="1512" alt="Screen Shot 2025-07-08 at 9 32 31 PM" src="https://github.com/user-attachments/assets/91b3b0f0-1c6c-45da-9836-4aee7245d95a" />
 
 * Sample/production test data and test queries for our 5 basic features for Milestone 2 is in the 'test' folder
