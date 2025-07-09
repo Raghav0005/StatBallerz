@@ -36,7 +36,7 @@ python server.py
 
 ### Step 7: Visit 127.0.0.1:5000 in your browser
 
-## Testing the database
+## Testing the database for sample data
 
 ### Step 1: SSH into student server and clone the repo
 ```
@@ -54,12 +54,11 @@ git clone https://github.com/Raghav0005/StatBallerz.git
 
 ***
 
-## Current Features -- Milestone 1:
+## Current Features -- Milestone 1 + 2:
 
-The current iteration of the project as of Milestone 1 has a successfully set up frontend (React + Javascript + Vite) and backend (Flask). We have successfully integrated 1-2 simple features/functionalities, being the login and the signup, which will serve as a starting point for completing the rest of our project! 
+The current iteration of the project as of Milestone 2 has a successfully set up frontend (React + Javascript + Vite) and backend (Flask). We have successfully integrated 3-4 simple features/functionalities for the project! 
 
-Our SQL schema's have been appropriately defined and created, and the frontend can successfully access our database. The login and signup pages are done and have been created, fully functioning with our database. Once a user signs up and logs into their newly created account, a preliminary search/home pages is visible that can be seen on successfully login. 
-(Note that there may be some edge cases with signups/login logic, which will be revised and improved in later versions of our application. However, the current login/signup is sufficient to show/test database connectivity with our application!)
+Our SQL schema's have been appropriately defined and created, and our application successfully leverages the database for both sample and production data. The user logic has been implemented as shown below (4 basic features), as well as an additional feature of allowing the user to search for players in the searchbar once logged in. Advanced queries and associated logic will be further implemented on top of these basic application features in Milestone 3.)
 
 Home/Login Page: <br/>
 <img width="500" alt="Screen Shot 2025-06-19 at 3 20 17 PM" src="https://github.com/user-attachments/assets/3018aa47-03e0-4ba8-9116-a4ca98acaf03" />
@@ -83,4 +82,7 @@ Account Deletion: <br/>
 <img width="500" alt="Screen Shot 2025-06-19 at 3 24 54 PM" src="https://github.com/user-attachments/assets/60329cc1-d163-4020-96f7-ccf89516f1cf" />
 <img width="500" alt="Screen Shot 2025-06-19 at 3 24 54 PM" src="https://github.com/user-attachments/assets/2bc0258f-63e1-4128-963e-7b9b8a829978" />
 
-* Sample test data and test queries for our 4 basic features for Milestone 1 is in the 'test' folder
+Search for Player (Additional Feature):
+<img width="1512" alt="Screen Shot 2025-07-08 at 9 32 31 PM" src="https://github.com/user-attachments/assets/91b3b0f0-1c6c-45da-9836-4aee7245d95a" />
+
+* Sample/production test data and test queries for our 5 basic features for Milestone 2 is in the 'test' folder
