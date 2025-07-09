@@ -4,3 +4,4 @@ venv/
 .tmp.sql
 totalData/NBA_Database.sql
 totalData/PlayerStatistics.cs
+output.txt
