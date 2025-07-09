@@ -36,6 +36,26 @@ python server.py
 
 ### Step 7: Visit 127.0.0.1:5000 in your browser
 
+***
+
+## Testing the database for production data
+
+### Step 1: SSH into student server and clone the repo
+```
+ssh linux.student.cs.uwaterloo.ca
+git clone https://github.com/Raghav0005/StatBallerz.git
+```
+### Step 2: Loading the production database
+```
+./setupSchema.sh
+```
+### Step 3: Testing the database
+```
+./runSqlCmd.sh tests/q1/production/query.sql # run any file you want, based on the folders in tests
+```
+
+***
+
 ## Testing the database for sample data
 
 ### Step 1: SSH into student server and clone the repo
@@ -43,13 +63,13 @@ python server.py
 ssh linux.student.cs.uwaterloo.ca
 git clone https://github.com/Raghav0005/StatBallerz.git
 ```
-### Step 2: Loading the database
+### Step 2: Loading the sample database
 ```
-./setupSchema.sh
+./runSqlFile.sh insert_sample_database.sql
 ```
 ### Step 3: Testing the database
 ```
-./runSqlCmd.sh tests/q1/query.sql # run any file you want, based on the folders in tests
+./runSqlCmd.sh tests/q1/sample/query.sql # run any file you want, based on the folders in tests
 ```
 
 ***
