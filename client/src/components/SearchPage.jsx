@@ -24,33 +24,38 @@ export default function SearchPage() {
         return;
       }
 
-      const rows = data.results || [];
-      const parsedPlayers = [];
+      if (data.results.length > 0) {
+        const rows = data.results || [];
+        const parsedPlayers = [];
 
-      for (const entry of rows) {
-        const rawKey = Object.keys(entry)[0];
-        const rawValue = entry[rawKey];
+        for (const entry of rows) {
+          const rawKey = Object.keys(entry)[0];
+          const rawValue = entry[rawKey];
 
-        const headers = rawKey.trim().split(/\s+/);
-        const values = rawValue.trim().split(/\s+/);
+          const headers = rawKey.trim().split(/\s+/);
+          const values = rawValue.trim().split(/\s+/);
 
-        // Safely handle multi-word name
-        const parsed = {};
-        parsed[headers[0]] = values[0]; // PLAYERID
-        parsed[headers[1]] = values[1] + " " + values[2]; // PNAME
-        parsed[headers[2]] = values[3]; // BIRTHDATE
-        parsed[headers[3]] = values[4]; // HEIGHT
-        parsed[headers[4]] = values[5]; // BODYWEIGHT
-        parsed[headers[5]] = values[6]; // DRAFTYEAR
-        parsed[headers[6]] = values[7]; // DRAFTROUND
-        parsed[headers[7]] = values[8]; // DRAFTPICK
-        parsed[headers[8]] = values[9]; // COUNTRY
-        parsed[headers[9]] = values[10]; // SCHOOL
+          // Safely handle multi-word name
+          const parsed = {};
+          parsed[headers[0]] = values[0]; // PLAYERID
+          parsed[headers[1]] = values[1] + " " + values[2]; // PNAME
+          parsed[headers[2]] = values[3]; // BIRTHDATE
+          parsed[headers[3]] = values[4]; // HEIGHT
+          parsed[headers[4]] = values[5]; // BODYWEIGHT
+          parsed[headers[5]] = values[6]; // DRAFTYEAR
+          parsed[headers[6]] = values[7]; // DRAFTROUND
+          parsed[headers[7]] = values[8]; // DRAFTPICK
+          parsed[headers[8]] = values[9]; // COUNTRY
+          parsed[headers[9]] = values[10]; // SCHOOL
 
-        parsedPlayers.push(parsed);
+          parsedPlayers.push(parsed);
+        }
+
+        setPlayers(parsedPlayers);
       }
-
-      setPlayers(parsedPlayers);
+      else {
+        alert("❌ No player found. Please try again.")
+      }
     } catch (err) {
       console.error("Search error:", err);
       alert("❌ An error occurred while searching. Please try again.");
