@@ -112,9 +112,10 @@ with open(playedInOut, 'w', encoding='utf-8') as playedInOutFile, open(hasPlayer
     for index,row in player_stats.iterrows():
         playerId = row['personId']
         gameId = row['gameId']
-        numMinutes = row['numMinutes']
+        numMinutes = str(row['numMinutes'])
         mins,seconds = 0,0
-        if isinstance(numMinutes, str): mins,seconds = numMinutes.split('.')
+        if "." in numMinutes: 
+            mins,seconds = numMinutes.split('.')
         numSeconds = int(mins) * 60 + int(seconds)
         points = row['points']
         assists = row['assists']
