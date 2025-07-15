@@ -16,23 +16,69 @@ def parse_sql_shell_output():
     filename = ".results/results.out"
     with open(filename, 'r', encoding='utf-8') as file:
         lines = file.readlines()
+    print(lines)
 
     if not lines:
         return []
 
-    # Parse header
-    header_line = lines[1]
-    columns = [col.strip() for col in header_line.split('|')]
+    header_line = None
+    header_index = -1
+    
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        if stripped and not stripped.startswith('-') and not stripped.startswith('+'):
+            if any(c.isalpha() for c in stripped) and 'record(s)' not in stripped:
+                header_line = line
+                header_index = i
+                break
+    
+    if not header_line:
+        return []
 
-    # Parse data
+    if '|' in header_line:
+        columns = [col.strip() for col in header_line.split('|') if col.strip()]
+        delimiter = '|'
+    else:
+        columns = header_line.split()
+        delimiter = None
+
+    print(f"Detected columns: {columns}")
+    print(f"Using delimiter: {delimiter}")
+
     results = []
-    for line in lines[3:-4]:
-        if not line.strip():
-            continue  # skip empty lines
-        values = [val.strip() for val in line.split('|')]
-        row = dict(zip(columns, values))
-        results.append(row)
+    data_start = header_index + 1
+    
+    while data_start < len(lines):
+        line = lines[data_start].strip()
+        if line.startswith('-') or line.startswith('+') or not line:
+            data_start += 1
+        else:
+            break
+    
+    for line in lines[data_start:]:
+        stripped = line.strip()
+        
+        if (not stripped or 
+            stripped.startswith('-') or 
+            stripped.startswith('+') or
+            'record(s)' in stripped or
+            'selected' in stripped):
+            continue
+        
+        if delimiter == '|':
+            values = [val.strip() for val in line.split('|') if val.strip()]
+        else:
+            values = stripped.split()
+        
+        if values and len(values) >= len(columns):
+            row = {}
+            for i, col in enumerate(columns):
+                if i < len(values):
+                    row[col] = values[i]
+            results.append(row)
+    
     print(results)
+    return results
 
     return results
 
@@ -161,6 +207,31 @@ def searchplayer():
         "message": "Successful Search of Player",
         "results": results
     }), 200
+
+# games
+@app.route("/api/games/stats", methods=["GET"])
+def get_games_stats():
+    params = request.args
+    params_map = {key: params[key] for key in params}
+    
+    start_date = params_map.get("startDate")
+    end_date = params_map.get("endDate")
+    stat = params_map.get("stat", "Points")
+    if not start_date or not end_date:
+        return jsonify({"error": "Start date and end date are required"}), 400
+    replacements = {
+        "{{START_DATE}}": start_date,
+        "{{END_DATE}}": end_date,
+        "{{STAT}}": stat,
+    }
+    results = run_query_from_template("get_games_stats_template.sql", replacements)
+    print("Games stats results:", results)
+    os.system('./runSqlCmd.sh .listUserTable.sql')
+    return jsonify({
+        "message": "Games stats retrieved successfully",
+        "results": results  
+    }), 200
+    
 
 if __name__ == "__main__":
     os.system("./setupSchema.sh")

@@ -5,6 +5,7 @@ import SearchPage from "./components/SearchPage";
 import QuizPage from "./components/QuizPage";
 import ProfilePage from "./components/ProfilePage";
 import Layout from "./components/Layout";
+import GamesPage from "./components/GamesPage";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
 
       <Route element={<Layout />}>
         <Route path="/home" element={<SearchPage />} />
+        <Route path="/games" element={<GamesPage />} />
         <Route path="/quiz" element={<QuizPage />} />
         <Route path="/profile" element={<ProfilePage />} />
       </Route>
