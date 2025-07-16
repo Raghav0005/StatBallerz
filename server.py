@@ -16,24 +16,88 @@ def parse_sql_shell_output():
     filename = ".results/results.out"
     with open(filename, 'r', encoding='utf-8') as file:
         lines = file.readlines()
+    print(lines)
 
     if not lines:
         return []
 
-    # Parse header
-    header_line = lines[1]
-    columns = [col.strip() for col in header_line.split('|')]
+    # Find the header line and separator line
+    header_line = None
+    separator_line = None
+    header_index = -1
+    
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        if stripped and not stripped.startswith('-') and not stripped.startswith('+'):
+            if any(c.isalpha() for c in stripped) and 'record(s)' not in stripped:
+                header_line = line
+                header_index = i
+                # Look for the separator line (dashes) right after the header
+                if i + 1 < len(lines) and lines[i + 1].strip().startswith('-'):
+                    separator_line = lines[i + 1]
+                break
+    
+    if not header_line or not separator_line:
+        print("Could not find header or separator line")
+        return []
 
-    # Parse data
+    # parse field widths based on the separator line (dashes)
+    dash_groups = []
+    current_start = 0
+    in_dashes = False
+    
+    for i, char in enumerate(separator_line):
+        if char == '-' and not in_dashes:
+            current_start = i
+            in_dashes = True
+        elif char != '-' and in_dashes:
+            # end of current field
+            dash_groups.append((current_start, i))
+            in_dashes = False
+    
+    # handle case where line ends with dashes
+    if in_dashes:
+        dash_groups.append((current_start, len(separator_line)))
+
+    columns = []
+    for start, end in dash_groups:
+        if start < len(header_line):
+            col_name = header_line[start:end].strip()
+            if col_name:
+                columns.append(col_name)
+
+    print(f"Columns: {columns}")
+    print(f"Field positions: {dash_groups}")
+
+    # Parse data rows using fixed-width positions
     results = []
-    for line in lines[3:-4]:
-        if not line.strip():
-            continue  # skip empty lines
-        values = [val.strip() for val in line.split('|')]
-        row = dict(zip(columns, values))
-        results.append(row)
+    data_start = header_index + 2  # Skip header and separator line
+    
+    for line in lines[data_start:]:
+        stripped = line.strip()
+        
+        # Skip empty lines and footer lines
+        if (not stripped or 
+            stripped.startswith('-') or 
+            stripped.startswith('+') or
+            'record(s)' in stripped or
+            'selected' in stripped):
+            continue
+        
+        # extract using fixed-width positions
+        row = {}
+        for i, (start, end) in enumerate(dash_groups):
+            if i < len(columns):
+                if start < len(line):
+                    value = line[start:end].strip()
+                    row[columns[i]] = value if value else None
+                else:
+                    row[columns[i]] = None
+        
+        if row:
+            results.append(row)
+    
     print(results)
-
     return results
 
 def load_and_fill_query(filename, replacements):
@@ -161,6 +225,31 @@ def searchplayer():
         "message": "Successful Search of Player",
         "results": results
     }), 200
+
+# games
+@app.route("/api/games/stats", methods=["GET"])
+def get_games_stats():
+    params = request.args
+    params_map = {key: params[key] for key in params}
+    
+    start_date = params_map.get("startDate")
+    end_date = params_map.get("endDate")
+    stat = params_map.get("stat", "Points")
+    if not start_date or not end_date:
+        return jsonify({"error": "Start date and end date are required"}), 400
+    replacements = {
+        "{{START_DATE}}": start_date,
+        "{{END_DATE}}": end_date,
+        "{{STAT}}": stat,
+    }
+    results = run_query_from_template("get_games_stats_template.sql", replacements)
+    print("Games stats results:", results)
+    os.system('./runSqlCmd.sh .listUserTable.sql')
+    return jsonify({
+        "message": "Games stats retrieved successfully",
+        "results": results  
+    }), 200
+    
 
 if __name__ == "__main__":
     os.system("./setupSchema.sh")

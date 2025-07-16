@@ -3,22 +3,28 @@ import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
 import { searchPlayer } from "../api";
 
-function formatName(fullName) {
-  return fullName
-    .toLowerCase()
-    .split(" ")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
 export default function SearchPage() {
+  const [query, setQuery] = useState("");
+  const [players, setPlayers] = useState([]);
   const { user } = useAuth();
+
+  // Define expected columns for player search results
+  const playerColumns = [
+    { key: "PLAYERID", header: "Player ID" },
+    { key: "PNAME", header: "Name" },
+    { key: "BIRTHDATE", header: "Birth Date" },
+    { key: "HEIGHT", header: "Height" },
+    { key: "BODYWEIGHT", header: "Weight" },
+    { key: "DRAFTYEAR", header: "Draft Year" },
+    { key: "DRAFTROUND", header: "Round" },
+    { key: "DRAFTPICK", header: "Pick" },
+    { key: "COUNTRY", header: "Country" },
+    { key: "SCHOOL", header: "School" },
+  ];
+
   if (!user) {
     return <Navigate to="/" replace />;
   }
-
-  const [query, setQuery] = useState("");
-  const [players, setPlayers] = useState([]);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -31,38 +37,12 @@ export default function SearchPage() {
         return;
       }
 
-      if (data.results.length > 0) {
-        const rows = data.results || [];
-        const parsedPlayers = [];
-
-        for (const entry of rows) {
-          const rawKey = Object.keys(entry)[0];
-          const rawValue = entry[rawKey];
-
-          const headers = rawKey.trim().split(/\s+/);
-          const values = rawValue.trim().split(/\s+/);
-
-        const name = values[1] + " " + values[2]
-
-        // Safely handle multi-word name
-        const parsed = {};
-        parsed[headers[0]] = values[0]; // PLAYERID
-        parsed[headers[1]] = formatName(name); // PNAME
-        parsed[headers[2]] = values[3]; // BIRTHDATE
-        parsed[headers[3]] = values[4]; // HEIGHT
-        parsed[headers[4]] = values[5]; // BODYWEIGHT
-        parsed[headers[5]] = values[6]; // DRAFTYEAR
-        parsed[headers[6]] = values[7]; // DRAFTROUND
-        parsed[headers[7]] = values[8]; // DRAFTPICK
-        parsed[headers[8]] = values[9]; // COUNTRY
-        parsed[headers[9]] = values[10]; // SCHOOL
-
-          parsedPlayers.push(parsed);
-        }
-
-        setPlayers(parsedPlayers);
+      if (data.results && data.results.length > 0) {
+        setPlayers(data.results);
+        console.log(data.results);
       } else {
         alert("❌ No player found. Please try again.");
+        setPlayers([]);
       }
     } catch (err) {
       console.error("Search error:", err);
@@ -94,45 +74,35 @@ export default function SearchPage() {
         </form>
       </section>
 
-      <main className="max-w-3xl mx-auto mt-12 px-6 text-gray-600">
+      <main className="max-w-6xl mx-auto mt-12 px-6 text-gray-600">
         {players.length > 0 ? (
           <div className="mt-6 overflow-auto rounded-lg shadow border border-gray-300">
             <table className="w-full text-sm text-left text-gray-700">
               <thead className="bg-gray-200 text-gray-900 font-semibold">
                 <tr>
-                  <th className="p-3">Player ID</th>
-                  <th className="p-3">Name</th>
-                  <th className="p-3">Birthdate</th>
-                  <th className="p-3">Height</th>
-                  <th className="p-3">Weight</th>
-                  <th className="p-3">Draft Year</th>
-                  <th className="p-3">Round</th>
-                  <th className="p-3">Pick</th>
-                  <th className="p-3">Country</th>
-                  <th className="p-3">School</th>
+                  {playerColumns.map((column) => (
+                    <th key={column.key} className="p-3">
+                      {column.header}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
                 {players.map((player, idx) => (
                   <tr key={idx} className="bg-white border-t">
-                    <td className="p-3">{player.PLAYERID}</td>
-                    <td className="p-3">{player.PNAME}</td>
-                    <td className="p-3">{player.BIRTHDATE}</td>
-                    <td className="p-3">{player.HEIGHT}</td>
-                    <td className="p-3">{player.BODYWEIGHT}</td>
-                    <td className="p-3">{player.DRAFTYEAR}</td>
-                    <td className="p-3">{player.DRAFTROUND}</td>
-                    <td className="p-3">{player.DRAFTPICK}</td>
-                    <td className="p-3">{player.COUNTRY}</td>
-                    <td className="p-3">{player.SCHOOL}</td>
+                    {playerColumns.map((column) => (
+                      <td key={column.key} className="p-3">
+                        {player[column.key] || "N/A"}
+                      </td>
+                    ))}
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>) :
-          <p>
-            Search for players, stats, or teams above and results will show here.
-          </p>}
+          </div>
+        ) : (
+          <p>Search for players, stats, or teams above and results will show here.</p>
+        )}
       </main>
     </div>
   );
