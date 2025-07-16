@@ -3,6 +3,14 @@ import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
 import { searchPlayer } from "../api";
 
+function formatName(fullName) {
+  return fullName
+    .toLowerCase()
+    .split(" ")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
 export default function SearchPage() {
   const { user } = useAuth();
   if (!user) {
@@ -11,7 +19,6 @@ export default function SearchPage() {
 
   const [query, setQuery] = useState("");
   const [players, setPlayers] = useState([]);
-
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -52,9 +59,8 @@ export default function SearchPage() {
         }
 
         setPlayers(parsedPlayers);
-      }
-      else {
-        alert("❌ No player found. Please try again.")
+      } else {
+        alert("❌ No player found. Please try again.");
       }
     } catch (err) {
       console.error("Search error:", err);
@@ -89,43 +95,43 @@ export default function SearchPage() {
 
       <main className="max-w-3xl mx-auto mt-12 px-6 text-gray-600">
         {players.length > 0 ? (
-        <div className="mt-6 overflow-auto rounded-lg shadow border border-gray-300">
-          <table className="w-full text-sm text-left text-gray-700">
-            <thead className="bg-gray-200 text-gray-900 font-semibold">
-              <tr>
-                <th className="p-3">Player ID</th>
-                <th className="p-3">Name</th>
-                <th className="p-3">Birthdate</th>
-                <th className="p-3">Height</th>
-                <th className="p-3">Weight</th>
-                <th className="p-3">Draft Year</th>
-                <th className="p-3">Round</th>
-                <th className="p-3">Pick</th>
-                <th className="p-3">Country</th>
-                <th className="p-3">School</th>
-              </tr>
-            </thead>
-            <tbody>
-              {players.map((player, idx) => (
-                <tr key={idx} className="bg-white border-t">
-                  <td className="p-3">{player.PLAYERID}</td>
-                  <td className="p-3">{player.PNAME}</td>
-                  <td className="p-3">{player.BIRTHDATE}</td>
-                  <td className="p-3">{player.HEIGHT}</td>
-                  <td className="p-3">{player.BODYWEIGHT}</td>
-                  <td className="p-3">{player.DRAFTYEAR}</td>
-                  <td className="p-3">{player.DRAFTROUND}</td>
-                  <td className="p-3">{player.DRAFTPICK}</td>
-                  <td className="p-3">{player.COUNTRY}</td>
-                  <td className="p-3">{player.SCHOOL}</td>
+          <div className="mt-6 overflow-auto rounded-lg shadow border border-gray-300">
+            <table className="w-full text-sm text-left text-gray-700">
+              <thead className="bg-gray-200 text-gray-900 font-semibold">
+                <tr>
+                  <th className="p-3">Player ID</th>
+                  <th className="p-3">Name</th>
+                  <th className="p-3">Birthdate</th>
+                  <th className="p-3">Height</th>
+                  <th className="p-3">Weight</th>
+                  <th className="p-3">Draft Year</th>
+                  <th className="p-3">Round</th>
+                  <th className="p-3">Pick</th>
+                  <th className="p-3">Country</th>
+                  <th className="p-3">School</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div> ) :
-        <p>
-          Search for players, stats, or teams above and results will show here.
-        </p>}
+              </thead>
+              <tbody>
+                {players.map((player, idx) => (
+                  <tr key={idx} className="bg-white border-t">
+                    <td className="p-3">{player.PLAYERID}</td>
+                    <td className="p-3">{player.PNAME}</td>
+                    <td className="p-3">{player.BIRTHDATE}</td>
+                    <td className="p-3">{player.HEIGHT}</td>
+                    <td className="p-3">{player.BODYWEIGHT}</td>
+                    <td className="p-3">{player.DRAFTYEAR}</td>
+                    <td className="p-3">{player.DRAFTROUND}</td>
+                    <td className="p-3">{player.DRAFTPICK}</td>
+                    <td className="p-3">{player.COUNTRY}</td>
+                    <td className="p-3">{player.SCHOOL}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p>Search for players, stats, or teams above and results will show here.</p>
+        )}
       </main>
     </div>
   );
