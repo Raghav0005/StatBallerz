@@ -3,6 +3,14 @@ import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
 import { searchPlayer } from "../api";
 
+function formatName(fullName) {
+  return fullName
+    .toLowerCase()
+    .split(" ")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
 export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [players, setPlayers] = useState([]);
@@ -39,7 +47,7 @@ export default function SearchPage() {
 
       if (data.results && data.results.length > 0) {
         setPlayers(data.results);
-        console.log(players);
+        console.log(data.results);
       } else {
         alert("❌ No player found. Please try again.");
         setPlayers([]);

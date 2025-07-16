@@ -1,12 +1,101 @@
-INSERT INTO Users (Username, PW) Values
-('admin', 'admin'),
-('user1', 'password1'),
-('user2', 'password2'),
-('user3', 'password3'),
-('user4', 'password4'),
-('user5', 'password5'),
-('user6', 'password6'),
-('user7', 'password7'),
-('user8', 'password8'),
-('user9', 'password9'),
-('user10', 'password10');
+
+INSERT INTO users (username, pw) VALUES ('user0', '0');
+INSERT INTO users (username, pw) VALUES ('user1', '1');
+INSERT INTO users (username, pw) VALUES ('user2', '2');
+INSERT INTO users (username, pw) VALUES ('user3', '3');
+INSERT INTO users (username, pw) VALUES ('user4', '4');
+INSERT INTO users (username, pw) VALUES ('user5', '5');
+INSERT INTO users (username, pw) VALUES ('user6', '6');
+INSERT INTO users (username, pw) VALUES ('user7', '7');
+INSERT INTO users (username, pw) VALUES ('user8', '8');
+INSERT INTO users (username, pw) VALUES ('user9', '9');
+INSERT INTO users (username, pw) VALUES ('user10', '10');
+INSERT INTO users (username, pw) VALUES ('user11', '11');
+INSERT INTO users (username, pw) VALUES ('user12', '12');
+INSERT INTO users (username, pw) VALUES ('user13', '13');
+INSERT INTO users (username, pw) VALUES ('user14', '14');
+INSERT INTO users (username, pw) VALUES ('user15', '15');
+INSERT INTO users (username, pw) VALUES ('user16', '16');
+INSERT INTO users (username, pw) VALUES ('user17', '17');
+INSERT INTO users (username, pw) VALUES ('user18', '18');
+INSERT INTO users (username, pw) VALUES ('user19', '19');
+INSERT INTO users (username, pw) VALUES ('user20', '20');
+INSERT INTO users (username, pw) VALUES ('user21', '21');
+INSERT INTO users (username, pw) VALUES ('user22', '22');
+INSERT INTO users (username, pw) VALUES ('user23', '23');
+INSERT INTO users (username, pw) VALUES ('user24', '24');
+INSERT INTO users (username, pw) VALUES ('user25', '25');
+INSERT INTO users (username, pw) VALUES ('user26', '26');
+INSERT INTO users (username, pw) VALUES ('user27', '27');
+INSERT INTO users (username, pw) VALUES ('user28', '28');
+INSERT INTO users (username, pw) VALUES ('user29', '29');
+INSERT INTO users (username, pw) VALUES ('user30', '30');
+INSERT INTO users (username, pw) VALUES ('user31', '31');
+INSERT INTO users (username, pw) VALUES ('user32', '32');
+INSERT INTO users (username, pw) VALUES ('user33', '33');
+INSERT INTO users (username, pw) VALUES ('user34', '34');
+INSERT INTO users (username, pw) VALUES ('user35', '35');
+INSERT INTO users (username, pw) VALUES ('user36', '36');
+INSERT INTO users (username, pw) VALUES ('user37', '37');
+INSERT INTO users (username, pw) VALUES ('user38', '38');
+INSERT INTO users (username, pw) VALUES ('user39', '39');
+INSERT INTO users (username, pw) VALUES ('user40', '40');
+INSERT INTO users (username, pw) VALUES ('user41', '41');
+INSERT INTO users (username, pw) VALUES ('user42', '42');
+INSERT INTO users (username, pw) VALUES ('user43', '43');
+INSERT INTO users (username, pw) VALUES ('user44', '44');
+INSERT INTO users (username, pw) VALUES ('user45', '45');
+INSERT INTO users (username, pw) VALUES ('user46', '46');
+INSERT INTO users (username, pw) VALUES ('user47', '47');
+INSERT INTO users (username, pw) VALUES ('user48', '48');
+INSERT INTO users (username, pw) VALUES ('user49', '49');
+INSERT INTO users (username, pw) VALUES ('user50', '50');
+INSERT INTO users (username, pw) VALUES ('user51', '51');
+INSERT INTO users (username, pw) VALUES ('user52', '52');
+INSERT INTO users (username, pw) VALUES ('user53', '53');
+INSERT INTO users (username, pw) VALUES ('user54', '54');
+INSERT INTO users (username, pw) VALUES ('user55', '55');
+INSERT INTO users (username, pw) VALUES ('user56', '56');
+INSERT INTO users (username, pw) VALUES ('user57', '57');
+INSERT INTO users (username, pw) VALUES ('user58', '58');
+INSERT INTO users (username, pw) VALUES ('user59', '59');
+INSERT INTO users (username, pw) VALUES ('user60', '60');
+INSERT INTO users (username, pw) VALUES ('user61', '61');
+INSERT INTO users (username, pw) VALUES ('user62', '62');
+INSERT INTO users (username, pw) VALUES ('user63', '63');
+INSERT INTO users (username, pw) VALUES ('user64', '64');
+INSERT INTO users (username, pw) VALUES ('user65', '65');
+INSERT INTO users (username, pw) VALUES ('user66', '66');
+INSERT INTO users (username, pw) VALUES ('user67', '67');
+INSERT INTO users (username, pw) VALUES ('user68', '68');
+INSERT INTO users (username, pw) VALUES ('user69', '69');
+INSERT INTO users (username, pw) VALUES ('user70', '70');
+INSERT INTO users (username, pw) VALUES ('user71', '71');
+INSERT INTO users (username, pw) VALUES ('user72', '72');
+INSERT INTO users (username, pw) VALUES ('user73', '73');
+INSERT INTO users (username, pw) VALUES ('user74', '74');
+INSERT INTO users (username, pw) VALUES ('user75', '75');
+INSERT INTO users (username, pw) VALUES ('user76', '76');
+INSERT INTO users (username, pw) VALUES ('user77', '77');
+INSERT INTO users (username, pw) VALUES ('user78', '78');
+INSERT INTO users (username, pw) VALUES ('user79', '79');
+INSERT INTO users (username, pw) VALUES ('user80', '80');
+INSERT INTO users (username, pw) VALUES ('user81', '81');
+INSERT INTO users (username, pw) VALUES ('user82', '82');
+INSERT INTO users (username, pw) VALUES ('user83', '83');
+INSERT INTO users (username, pw) VALUES ('user84', '84');
+INSERT INTO users (username, pw) VALUES ('user85', '85');
+INSERT INTO users (username, pw) VALUES ('user86', '86');
+INSERT INTO users (username, pw) VALUES ('user87', '87');
+INSERT INTO users (username, pw) VALUES ('user88', '88');
+INSERT INTO users (username, pw) VALUES ('user89', '89');
+INSERT INTO users (username, pw) VALUES ('user90', '90');
+INSERT INTO users (username, pw) VALUES ('user91', '91');
+INSERT INTO users (username, pw) VALUES ('user92', '92');
+INSERT INTO users (username, pw) VALUES ('user93', '93');
+INSERT INTO users (username, pw) VALUES ('user94', '94');
+INSERT INTO users (username, pw) VALUES ('user95', '95');
+INSERT INTO users (username, pw) VALUES ('user96', '96');
+INSERT INTO users (username, pw) VALUES ('user97', '97');
+INSERT INTO users (username, pw) VALUES ('user98', '98');
+INSERT INTO users (username, pw) VALUES ('user99', '99');
