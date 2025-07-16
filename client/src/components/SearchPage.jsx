@@ -3,14 +3,6 @@ import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
 import { searchPlayer } from "../api";
 
-function formatName(fullName) {
-  return fullName
-    .toLowerCase()
-    .split(" ")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
 export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [players, setPlayers] = useState([]);
@@ -59,8 +51,7 @@ export default function SearchPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="h-16"></div>
+    <div className="min-h-screen bg-gray-100 pt-16 pb-16">
       <section className="max-w-3xl mx-auto mt-8 px-6">
         <form
           onSubmit={handleSearch}
