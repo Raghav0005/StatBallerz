@@ -37,7 +37,7 @@ export default function SearchPage() {
         // Safely handle multi-word name
         const parsed = {};
         parsed[headers[0]] = values[0]; // PLAYERID
-        parsed[headers[1]] = values[1] + " " + values[2]; // PNAME
+        parsed[headers[1]] = (values[1] + " " + values[2]).upper(); // PNAME
         parsed[headers[2]] = values[3]; // BIRTHDATE
         parsed[headers[3]] = values[4]; // HEIGHT
         parsed[headers[4]] = values[5]; // BODYWEIGHT
