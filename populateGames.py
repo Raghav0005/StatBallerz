@@ -43,7 +43,7 @@ with open(playersOut, 'w', encoding='utf-8') as playersOutFile:
         unprocessedSchool = row['school']
         birthDate = row['birthdate']
         unProcessedName = row['display_first_last']
-        fullName = (unProcessedName.replace("'", "''")).upper()
+        fullName = (unProcessedName.replace("'", "''"))
         school = unprocessedSchool.replace("'", "''")
         
         if draftYear == 'Undrafted' or pd.isna(draftPick):

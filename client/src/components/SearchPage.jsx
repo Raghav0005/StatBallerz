@@ -3,6 +3,14 @@ import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
 import { searchPlayer } from "../api";
 
+function formatName(fullName) {
+  return fullName
+    .toLowerCase()
+    .split(" ")
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
 export default function SearchPage() {
   const { user } = useAuth();
   if (!user) {
@@ -35,10 +43,12 @@ export default function SearchPage() {
           const headers = rawKey.trim().split(/\s+/);
           const values = rawValue.trim().split(/\s+/);
 
+        const name = values[1] + " " + values[2]
+
         // Safely handle multi-word name
         const parsed = {};
         parsed[headers[0]] = values[0]; // PLAYERID
-        parsed[headers[1]] = (values[1] + " " + values[2]).upper(); // PNAME
+        parsed[headers[1]] = formatName(name); // PNAME
         parsed[headers[2]] = values[3]; // BIRTHDATE
         parsed[headers[3]] = values[4]; // HEIGHT
         parsed[headers[4]] = values[5]; // BODYWEIGHT
