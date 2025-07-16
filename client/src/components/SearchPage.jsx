@@ -69,8 +69,7 @@ export default function SearchPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="h-16"></div>
+    <div className="min-h-screen bg-gray-100 pt-16 pb-16">
       <section className="max-w-3xl mx-auto mt-8 px-6">
         <form
           onSubmit={handleSearch}
@@ -128,10 +127,10 @@ export default function SearchPage() {
                 ))}
               </tbody>
             </table>
-          </div>
-        ) : (
-          <p>Search for players, stats, or teams above and results will show here.</p>
-        )}
+          </div>) :
+          <p>
+            Search for players, stats, or teams above and results will show here.
+          </p>}
       </main>
     </div>
   );
