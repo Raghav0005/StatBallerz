@@ -7,7 +7,7 @@ function formatName(fullName) {
   return fullName
     .toLowerCase()
     .split(" ")
-    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
 }
 
@@ -19,7 +19,6 @@ export default function SearchPage() {
 
   const [query, setQuery] = useState("");
   const [players, setPlayers] = useState([]);
-
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -62,9 +61,8 @@ export default function SearchPage() {
         }
 
         setPlayers(parsedPlayers);
-      }
-      else {
-        alert("❌ No player found. Please try again.")
+      } else {
+        alert("❌ No player found. Please try again.");
       }
     } catch (err) {
       console.error("Search error:", err);
