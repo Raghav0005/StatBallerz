@@ -105,3 +105,19 @@ export async function fetchGameStats(startDate, endDate, stat) {
     throw new Error("Fetch game stats failed");
   }
 }
+
+export async function getAnsweredAllQuestionsAsUser(username) {
+  const res = await fetch(`/api/special-queries/answered-all-questions?username=${encodeURIComponent(username)}`);
+  
+  if (res.ok) {
+    const data = await res.json();
+    console.log('getAnsweredAllQuestionsAsUser success:', data);
+    return data;
+  } else if (res.status === 400) {
+    console.log('getAnsweredAllQuestionsAsUser bad request');
+    return { error: "Username required" };
+  } else {
+    console.error('getAnsweredAllQuestionsAsUser failed:', res.status);
+    throw new Error("Special query failed");
+  }
+}
