@@ -21,7 +21,9 @@ def parse_sql_shell_output():
     if not lines:
         return []
 
+    # Find the header line and separator line
     header_line = None
+    separator_line = None
     header_index = -1
     
     for i, line in enumerate(lines):
@@ -30,34 +32,51 @@ def parse_sql_shell_output():
             if any(c.isalpha() for c in stripped) and 'record(s)' not in stripped:
                 header_line = line
                 header_index = i
+                # Look for the separator line (dashes) right after the header
+                if i + 1 < len(lines) and lines[i + 1].strip().startswith('-'):
+                    separator_line = lines[i + 1]
                 break
     
-    if not header_line:
+    if not header_line or not separator_line:
+        print("Could not find header or separator line")
         return []
 
-    if '|' in header_line:
-        columns = [col.strip() for col in header_line.split('|') if col.strip()]
-        delimiter = '|'
-    else:
-        columns = header_line.split()
-        delimiter = None
-
-    print(f"Detected columns: {columns}")
-    print(f"Using delimiter: {delimiter}")
-
-    results = []
-    data_start = header_index + 1
+    # parse field widths based on the separator line (dashes)
+    dash_groups = []
+    current_start = 0
+    in_dashes = False
     
-    while data_start < len(lines):
-        line = lines[data_start].strip()
-        if line.startswith('-') or line.startswith('+') or not line:
-            data_start += 1
-        else:
-            break
+    for i, char in enumerate(separator_line):
+        if char == '-' and not in_dashes:
+            current_start = i
+            in_dashes = True
+        elif char != '-' and in_dashes:
+            # end of current field
+            dash_groups.append((current_start, i))
+            in_dashes = False
+    
+    # handle case where line ends with dashes
+    if in_dashes:
+        dash_groups.append((current_start, len(separator_line)))
+
+    columns = []
+    for start, end in dash_groups:
+        if start < len(header_line):
+            col_name = header_line[start:end].strip()
+            if col_name:
+                columns.append(col_name)
+
+    print(f"Columns: {columns}")
+    print(f"Field positions: {dash_groups}")
+
+    # Parse data rows using fixed-width positions
+    results = []
+    data_start = header_index + 2  # Skip header and separator line
     
     for line in lines[data_start:]:
         stripped = line.strip()
         
+        # Skip empty lines and footer lines
         if (not stripped or 
             stripped.startswith('-') or 
             stripped.startswith('+') or
@@ -65,21 +84,20 @@ def parse_sql_shell_output():
             'selected' in stripped):
             continue
         
-        if delimiter == '|':
-            values = [val.strip() for val in line.split('|') if val.strip()]
-        else:
-            values = stripped.split()
+        # extract using fixed-width positions
+        row = {}
+        for i, (start, end) in enumerate(dash_groups):
+            if i < len(columns):
+                if start < len(line):
+                    value = line[start:end].strip()
+                    row[columns[i]] = value if value else None
+                else:
+                    row[columns[i]] = None
         
-        if values and len(values) >= len(columns):
-            row = {}
-            for i, col in enumerate(columns):
-                if i < len(values):
-                    row[col] = values[i]
+        if row:
             results.append(row)
     
     print(results)
-    return results
-
     return results
 
 def load_and_fill_query(filename, replacements):
