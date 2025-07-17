@@ -73,7 +73,17 @@ export async function updatePassword(username, password) {
 }
 
 export async function searchPlayer(pname) {
-  const res = await fetch(`/api/search?pname=${encodeURIComponent(pname)}`);
+  const formatPlayerName = (name) => {
+    return name
+      .trim()
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  const formattedName = formatPlayerName(pname);
+  const res = await fetch(`/api/search?pname=${encodeURIComponent(formattedName)}`);
 
   if (res.ok) {
     const data = await res.json();
