@@ -73,7 +73,17 @@ export async function updatePassword(username, password) {
 }
 
 export async function searchPlayer(pname) {
-  const res = await fetch(`/api/search?pname=${encodeURIComponent(pname)}`);
+  const formatPlayerName = (name) => {
+    return name
+      .trim()
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  const formattedName = formatPlayerName(pname);
+  const res = await fetch(`/api/search?pname=${encodeURIComponent(formattedName)}`);
 
   if (res.ok) {
     const data = await res.json();
@@ -103,5 +113,21 @@ export async function fetchGameStats(startDate, endDate, stat) {
   } else {
     console.error("fetchGameStats failed:", res.status);
     throw new Error("Fetch game stats failed");
+  }
+}
+
+export async function getAnsweredAllQuestionsAsUser(username) {
+  const res = await fetch(`/api/special-queries/answered-all-questions?username=${encodeURIComponent(username)}`);
+  
+  if (res.ok) {
+    const data = await res.json();
+    console.log('getAnsweredAllQuestionsAsUser success:', data);
+    return data;
+  } else if (res.status === 400) {
+    console.log('getAnsweredAllQuestionsAsUser bad request');
+    return { error: "Username required" };
+  } else {
+    console.error('getAnsweredAllQuestionsAsUser failed:', res.status);
+    throw new Error("Special query failed");
   }
 }

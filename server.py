@@ -250,6 +250,24 @@ def get_games_stats():
         "results": results  
     }), 200
     
+@app.route("/api/special-queries/answered-all-questions")
+def answered_all_questions_as_user():
+    params = request.args
+    params_map = {key: params[key] for key in params}
+    username = params_map.get("username")
+    if not username:
+        return jsonify({"error": "Username parameter is required"}), 400
+    
+    replacements = {
+        "{{USERNAME}}": username,
+    }
+    results = run_query_from_template("answered_all_questions_as_user.sql", replacements)
+    
+    print("Special query results:", results)
+    return jsonify({
+        "message": "Successfully found users who answered all questions as current user",
+        "results": results
+    }), 200
 
 if __name__ == "__main__":
     os.system("./setupSchema.sh")
@@ -274,4 +292,4 @@ if __name__ == "__main__":
     #     results = parse_sql_shell_output()
     #     print("User results:", results)
         
-    app.run(debug=True)
+    app.run(debug=True, port=5002)
