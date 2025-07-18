@@ -77,13 +77,13 @@ export async function searchPlayer(pname) {
     return name
       .trim()
       .toLowerCase()
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   };
 
   const formattedName = formatPlayerName(pname);
-  const res = await fetch(`/api/search?pname=${encodeURIComponent(formattedName)}`);
+  const res = await fetch(`/api/player/search?pname=${encodeURIComponent(formattedName)}`);
 
   if (res.ok) {
     const data = await res.json();
@@ -94,6 +94,30 @@ export async function searchPlayer(pname) {
     return { error: "Search string" };
   } else {
     console.error("searchPlayer failed:", res.status);
+    throw new Error("Search failed");
+  }
+}
+
+export async function searchTeam(teamName) {
+  const formatTeamName = (name) => {
+    return name
+      .trim()
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+  const formattedName = formatTeamName(teamName);
+  const res = await fetch(`/api/team/search?teamname=${encodeURIComponent(formattedName)}`);
+  if (res.ok) {
+    const data = await res.json();
+    console.log("searchTeam success:", data);
+    return data;
+  } else if (res.status === 400) {
+    console.log("searchTeam unauthorized");
+    return { error: "Search string" };
+  } else {
+    console.error("searchTeam failed:", res.status);
     throw new Error("Search failed");
   }
 }
@@ -116,18 +140,31 @@ export async function fetchGameStats(startDate, endDate, stat) {
   }
 }
 
-export async function getAnsweredAllQuestionsAsUser(username) {
-  const res = await fetch(`/api/special-queries/answered-all-questions?username=${encodeURIComponent(username)}`);
-  
+export async function fetchGameDetails(gameIds) {
+  const res = await fetch(`/api/games/teams?gameIds=${encodeURIComponent(gameIds)}`);
+
   if (res.ok) {
     const data = await res.json();
-    console.log('getAnsweredAllQuestionsAsUser success:', data);
+    console.log("fetchGameDetails success:", data);
+    return { data };
+  } else {
+    console.error("fetchGameDetails failed:", res.status);
+    throw new Error("Fetch game details failed");
+  }
+}
+
+export async function getAnsweredAllQuestionsAsUser(username) {
+  const res = await fetch(`/api/special-queries/answered-all-questions?username=${encodeURIComponent(username)}`);
+
+  if (res.ok) {
+    const data = await res.json();
+    console.log("getAnsweredAllQuestionsAsUser success:", data);
     return data;
   } else if (res.status === 400) {
-    console.log('getAnsweredAllQuestionsAsUser bad request');
+    console.log("getAnsweredAllQuestionsAsUser bad request");
     return { error: "Username required" };
   } else {
-    console.error('getAnsweredAllQuestionsAsUser failed:', res.status);
+    console.error("getAnsweredAllQuestionsAsUser failed:", res.status);
     throw new Error("Special query failed");
   }
 }

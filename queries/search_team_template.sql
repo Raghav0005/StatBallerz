@@ -1,0 +1,1 @@
+SELECT * FROM Teams WHERE TeamName LIKE '%{{TEAM NAME}}%';

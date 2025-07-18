@@ -207,8 +207,8 @@ def update_password():
     os.system('./runSqlCmd.sh .listUserTable.sql')
     return jsonify({"message": "User password updated successfully"}), 200
 
-@app.route("/api/search")
-def searchplayer():
+@app.route("/api/player/search", methods=["GET"])
+def search_player():
     params = request.args
     params_map = {key: params[key] for key in params}
     player_name = params_map.get("pname")
@@ -224,6 +224,37 @@ def searchplayer():
     return jsonify({
         "message": "Successful Search of Player",
         "results": results
+    }), 200
+
+@app.route("/api/team/search", methods=["GET"])
+def search_team():
+    params = request.args
+    params_map = {key: params[key] for key in params}
+    team_name = params_map.get("teamname")
+    if not team_name:
+        return jsonify({"error": "Team name is required"}), 400
+    
+    # get the teams
+    team_replacements = {
+        "{{TEAM NAME}}": team_name,
+    }
+    team_results = run_query_from_template("search_team_template.sql", team_replacements)
+    print(team_results)
+    # for each team found, fetching the players
+    for team in team_results:
+        if 'TEAMID' in team:
+            player_replacements = {
+                "{{TEAM_ID}}": str(team['TEAMID'])
+            }
+            player_results = run_query_from_template("get_team_players_template.sql", player_replacements)
+            team['players'] = player_results
+        else:
+            team['players'] = []
+    
+    print("Search results with players:", team_results)
+    return jsonify({
+        "message": "Successful Search of Team",
+        "results": team_results
     }), 200
 
 # games
@@ -247,6 +278,32 @@ def get_games_stats():
     os.system('./runSqlCmd.sh .listUserTable.sql')
     return jsonify({
         "message": "Games stats retrieved successfully",
+        "results": results  
+    }), 200
+    
+@app.route("/api/games/teams", methods=["GET"])
+def get_game_teams():
+    params = request.args
+    game_ids = params.get("gameIds", "")
+    
+    if not game_ids:
+        return jsonify({"error": "Game IDs are required"}), 400
+    
+    game_ids_list = [str(int(id.strip())) for id in game_ids.split(",") if id.strip().isdigit()]
+    game_ids_formatted = ",".join(game_ids_list)
+    
+    if not game_ids_formatted:
+        return jsonify({"error": "Valid game IDs are required"}), 400
+    
+    replacements = {
+        "{{GAME_IDS}}": game_ids_formatted,
+    }
+    
+    results = run_query_from_template("get_game_teams_template.sql", replacements)
+    print("Game teams results:", results)
+    
+    return jsonify({
+        "message": "Game teams retrieved successfully",
         "results": results  
     }), 200
     
