@@ -31,6 +31,12 @@ export default function SearchPage() {
     { key: "DRAFTPICK", header: "Pick" },
     { key: "COUNTRY", header: "Country" },
     { key: "SCHOOL", header: "School" },
+    { key: "AVERAGEPOINTS", header: "Avg Points" },
+    { key: "AVERAGEASSISTS", header: "Avg Assists" },
+    { key: "AVERAGEREBOUNDS", header: "Avg Rebounds" },
+    { key: "AVERAGESTEALS", header: "Avg Steals" },
+    { key: "AVERAGEBLOCKS", header: "Avg Blocks" },
+    { key: "AVERAGETURNOVERS", header: "Avg Turnovers" },
   ];
 
   const teamColumns = [{ key: "TEAMNAME", header: "Team Name" }];
