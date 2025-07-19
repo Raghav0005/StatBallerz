@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { insertQuestion } from "../api";
+import { insertQuestion, fetchRandomQuiz } from "../api";
 
 export default function QuizPage() {
   const { user } = useAuth();
@@ -15,6 +15,8 @@ export default function QuizPage() {
   const [quizStarted, setQuizStarted] = useState(false);
   const [userAnswers, setUserAnswers] = useState([]);
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   if (!user) return <Navigate to="/" replace />;
 
@@ -71,14 +73,50 @@ export default function QuizPage() {
     }
   };
 
-  const startQuiz = () => {
-    if (questions.length === 0) {
-      alert("Please add at least one question!");
-      return;
+  const startQuiz = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const result = await fetchRandomQuiz();
+      
+      if (result.error) {
+        setError(result.error);
+        alert(`Error loading quiz: ${result.error}`);
+        return;
+      }
+
+      const data = result.data;
+      
+      // Transform backend data to match frontend expectations
+      const transformedQuestions = data.questions.map(q => ({
+        questionId: q.questionId,
+        question: q.questionText,
+        options: q.answers.map(answer => answer.responseText),
+        answer: q.answers.find(answer => answer.isCorrect)?.responseText || ""
+      }));
+
+      if (transformedQuestions.length === 0) {
+        alert("No questions available in the database!");
+        return;
+      }
+
+      setQuestions(transformedQuestions);
+      setUserAnswers(Array(transformedQuestions.length).fill(""));
+      setQuizStarted(true);
+      setSubmitted(false);
+      
+      if (data.warning) {
+        alert(`Warning: ${data.warning}`);
+      }
+      
+    } catch (error) {
+      console.error("Error fetching quiz:", error);
+      setError(`Failed to load quiz: ${error.message}`);
+      alert(`Failed to load quiz: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
-    setUserAnswers(Array(questions.length).fill(""));
-    setQuizStarted(true);
-    setSubmitted(false);
   };
 
   const handleAnswerChange = (index, value) => {
@@ -91,10 +129,27 @@ export default function QuizPage() {
     setSubmitted(true);
   };
 
+  const calculateScore = () => {
+    let correct = 0;
+    questions.forEach((q, index) => {
+      if (q.answer === userAnswers[index]) {
+        correct++;
+      }
+    });
+    return correct;
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 pt-16 pb-16">
       <div className="max-w-2xl mx-auto mt-10 p-6 border rounded bg-white shadow space-y-6">
         <h1 className="text-2xl font-bold text-center">NBA Trivia Quiz</h1>
+        
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            {error}
+          </div>
+        )}
+
         <div className="text-center text-gray-700 font-medium">
           Question Bank: {questions.length} {questions.length === 1 ? "Total Question" : "Total Questions"}
         </div>
@@ -162,10 +217,14 @@ export default function QuizPage() {
             <div className="pt-6 text-center">
               <button
                 onClick={startQuiz}
-                className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
+                disabled={loading}
+                className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 disabled:bg-green-300 disabled:cursor-not-allowed"
               >
-                Start Quiz
+                {loading ? "Loading Quiz..." : "Start Quiz"}
               </button>
+              <p className="text-sm text-gray-600 mt-2">
+                This will load random questions from the database
+              </p>
             </div>
           </>
         ) : (
@@ -174,21 +233,23 @@ export default function QuizPage() {
               <>
                 <h2 className="text-xl font-semibold">Answer the questions:</h2>
                 {questions.map((q, index) => (
-                  <div key={index} className="mb-6">
-                    <p className="font-medium">Q{index + 1}: {q.question}</p>
-                    {q.options.map((option, i) => (
-                      <label key={i} className="block mt-2">
-                        <input
-                          type="radio"
-                          name={`question-${index}`}
-                          value={option}
-                          checked={userAnswers[index] === option}
-                          onChange={() => handleAnswerChange(index, option)}
-                          className="mr-2"
-                        />
-                        {option}
-                      </label>
-                    ))}
+                  <div key={q.questionId || index} className="mb-6 p-4 bg-gray-50 rounded">
+                    <p className="font-medium mb-3">Q{index + 1}: {q.question}</p>
+                    <div className="space-y-2">
+                      {q.options.map((option, i) => (
+                        <label key={i} className="flex items-center cursor-pointer hover:bg-gray-100 p-2 rounded">
+                          <input
+                            type="radio"
+                            name={`question-${index}`}
+                            value={option}
+                            checked={userAnswers[index] === option}
+                            onChange={() => handleAnswerChange(index, option)}
+                            className="mr-3"
+                          />
+                          <span>{option}</span>
+                        </label>
+                      ))}
+                    </div>
                   </div>
                 ))}
                 <div className="text-center">
@@ -202,30 +263,56 @@ export default function QuizPage() {
               </>
             ) : (
               <>
-                <h2 className="text-xl font-semibold">Results:</h2>
-                {questions.map((q, index) => {
-                  const isCorrect = q.answer === userAnswers[index];
-                  return (
-                    <div key={index} className="mb-6 border p-4 rounded">
-                      <p className="font-medium">Q{index + 1}: {q.question}</p>
-                      <p className="mt-1">
-                        <span className="font-semibold">Your answer:</span>{" "}
-                        <span className={isCorrect ? "text-green-600" : "text-red-600"}>
-                          {userAnswers[index] || "No answer selected"}
-                        </span>
-                      </p>
-                      <p className="mt-1">
-                        <span className="font-semibold">Correct answer:</span> {q.answer}
-                      </p>
-                    </div>
-                  );
-                })}
+                <div className="text-center mb-6">
+                  <h2 className="text-xl font-semibold">Quiz Results</h2>
+                  <div className="mt-2 text-lg">
+                    Score: <span className="font-bold text-green-600">
+                      {calculateScore()}/{questions.length}
+                    </span>
+                    <span className="text-gray-600 ml-2">
+                      ({Math.round((calculateScore() / questions.length) * 100)}%)
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  {questions.map((q, index) => {
+                    const isCorrect = q.answer === userAnswers[index];
+                    return (
+                      <div key={q.questionId || index} className="border p-4 rounded-lg">
+                        <p className="font-medium mb-2">Q{index + 1}: {q.question}</p>
+                        
+                        <div className="mb-2">
+                          <span className="font-semibold">Your answer: </span>
+                          <span className={isCorrect ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
+                            {userAnswers[index] || "No answer selected"}
+                            {isCorrect ? " ✓" : " ✗"}
+                          </span>
+                        </div>
+                        
+                        {!isCorrect && (
+                          <div className="mb-2">
+                            <span className="font-semibold">Correct answer: </span>
+                            <span className="text-green-600 font-medium">{q.answer}</span>
+                          </div>
+                        )}
+                        
+                        <div className="text-sm text-gray-600 mt-2">
+                          <strong>All options:</strong> {q.options.join(", ")}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
                 <div className="text-center">
                   <button
                     onClick={() => {
                       setQuizStarted(false);
                       setSubmitted(false);
                       setUserAnswers([]);
+                      setQuestions([]);
+                      setError(null);
                     }}
                     className="bg-gray-700 text-white px-6 py-2 rounded hover:bg-gray-800"
                   >

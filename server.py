@@ -390,6 +390,56 @@ def add_question():
         "message": "Question and answers added successfully",
         "questionId": question_id
     }), 201
+    
+@app.route("/api/quiz/random", methods=["GET"])
+def get_random_quiz():
+    try:
+        # Get random questions with answers
+        questions_data = run_query_from_template("get_random_questions_template.sql", {})
+        
+        if not questions_data:
+            return jsonify({"error": "No questions available"}), 404
+            
+        # Transform flat data into structured format
+        questions_dict = {}
+        
+        for row in questions_data:
+            question_id = row['QUESTIONID']
+            
+            # Create question entry if it doesn't exist
+            if question_id not in questions_dict:
+                questions_dict[question_id] = {
+                    "questionId": question_id,
+                    "questionText": row['QUESTIONTEXT'],
+                    "authorId": row['AUTHORID'],
+                    "answers": []
+                }
+            
+            # Add answer to the question
+            questions_dict[question_id]["answers"].append({
+                "answerNumber": row['ANSWERNUMBER'],
+                "responseText": row['RESPONSETEXT'],
+                "isCorrect": row['ISCORRECT']
+            })
+        
+        # Convert to list and ensure we have exactly 7 questions
+        questions_list = list(questions_dict.values())
+        
+        if len(questions_list) < 7:
+            return jsonify({
+                "warning": f"Only {len(questions_list)} questions available",
+                "questions": questions_list
+            }), 200
+            
+        return jsonify({
+            "message": "Random quiz questions retrieved successfully",
+            "questionsCount": len(questions_list),
+            "questions": questions_list
+        }), 200
+        
+    except Exception as e:
+        print(f"Error getting random quiz: {str(e)}")
+        return jsonify({"error": "Failed to retrieve quiz questions"}), 500
 
 if __name__ == "__main__":
     os.system("./setupSchema.sh")

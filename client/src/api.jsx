@@ -200,3 +200,25 @@ export async function insertQuestion(username, questionText, answers) {
     throw new Error("Add question failed");
   }
 }
+
+export async function fetchRandomQuiz() {
+  const res = await fetch("/api/quiz/random", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    console.log("fetchRandomQuiz success:", data);
+    return { data };
+  } else if (res.status === 404) {
+    console.log("fetchRandomQuiz no questions available");
+    return { error: "No questions available in the database." };
+  } else {
+    console.error("fetchRandomQuiz failed:", res.status);
+    const errorData = await res.json().catch(() => ({}));
+    return { error: errorData.error || "Failed to fetch quiz questions." };
+  }
+}
