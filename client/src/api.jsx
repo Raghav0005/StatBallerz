@@ -168,3 +168,35 @@ export async function getAnsweredAllQuestionsAsUser(username) {
     throw new Error("Special query failed");
   }
 }
+
+export async function insertQuestion(username, questionText, answers) {
+  const requestData = {
+    username: username,
+    questionText: questionText,
+    answers: answers // Array of {text: string, isCorrect: boolean}
+  };
+
+  const res = await fetch("/api/question", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(requestData),
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    console.log("addQuestion success:", data);
+    return { data };
+  } else if (res.status === 400) {
+    const errorData = await res.json();
+    console.log("addQuestion bad request:", errorData.error);
+    return { error: errorData.error };
+  } else if (res.status === 404) {
+    console.log("addQuestion user not found");
+    return { error: "User not found." };
+  } else {
+    console.error("addQuestion failed:", res.status);
+    throw new Error("Add question failed");
+  }
+}

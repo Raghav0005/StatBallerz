@@ -1,0 +1,1 @@
+INSERT INTO Questions (AuthorID, QuestionText) VALUES ({{AUTHOR_ID}}, '{{QUESTION_TEXT}}');

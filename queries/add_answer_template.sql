@@ -1,0 +1,1 @@
+INSERT INTO Answers (QuestionID, AnswerNumber, ResponseText, IsCorrect)  VALUES ({{QUESTION_ID}}, {{ANSWER_NUMBER}}, '{{RESPONSE_TEXT}}', {{IS_CORRECT}});

@@ -1,28 +1,26 @@
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
+import { insertQuestion } from "../api";
 
 export default function QuizPage() {
   const { user } = useAuth();
-  if (!user) return <Navigate to="/" replace />;
-
 
   const [questions, setQuestions] = useState([]);
   const [form, setForm] = useState({
     question: "",
-    options: ["", "", "", ""],
+    options: [""], // Start with one answer box
     answer: ""
   });
   const [quizStarted, setQuizStarted] = useState(false);
   const [userAnswers, setUserAnswers] = useState([]);
   const [submitted, setSubmitted] = useState(false);
 
+  if (!user) return <Navigate to="/" replace />;
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-
 
   const handleOptionChange = (index, value) => {
     const updated = [...form.options];
@@ -30,25 +28,48 @@ export default function QuizPage() {
     setForm({ ...form, options: updated });
   };
 
-
-  const addQuestion = () => {
+  const addQuestion = async () => {
     const { question, options, answer } = form;
-    if (
-      question &&
-      options.every((opt) => opt.trim() !== "") &&
-      options.includes(answer)
-    ) {
-      setQuestions([...questions, { question, options, answer }]);
-      setForm({
-        question: "",
-        options: ["", "", "", ""],
-        answer: ""
-      });
-    } else {
-      alert("Please fill out all fields and ensure the answer matches one of the options.");
+
+    if (!question || question.trim() === "") {
+      alert("Please enter a question.");
+      return;
+    }
+
+    if (!options.every((opt) => opt.trim() !== "")) {
+      alert("Please fill out all option fields.");
+      return;
+    }
+
+    if (!answer || !options.includes(answer)) {
+      alert("Please select a valid answer that matches one of the options.");
+      return;
+    }
+
+    try {
+      const answers = options.map((option) => ({
+        text: option.trim(),
+        isCorrect: option === answer
+      }));
+
+      const result = await insertQuestion(user.username, question.trim(), answers);
+
+      if (result.error) {
+        alert(`Error adding question: ${result.error}`);
+      } else {
+        setQuestions([...questions, { question, options, answer }]);
+        setForm({
+          question: "",
+          options: [""], // Reset to one empty box
+          answer: ""
+        });
+        alert("Question added successfully!");
+      }
+    } catch (error) {
+      console.error("Unexpected error:", error);
+      alert("An unexpected error occurred while adding the question.");
     }
   };
-
 
   const startQuiz = () => {
     if (questions.length === 0) {
@@ -60,18 +81,15 @@ export default function QuizPage() {
     setSubmitted(false);
   };
 
-
   const handleAnswerChange = (index, value) => {
     const updated = [...userAnswers];
     updated[index] = value;
     setUserAnswers(updated);
   };
 
-
   const submitQuiz = () => {
     setSubmitted(true);
   };
-
 
   return (
     <div className="min-h-screen bg-gray-100 pt-16 pb-16">
@@ -80,7 +98,6 @@ export default function QuizPage() {
         <div className="text-center text-gray-700 font-medium">
           Question Bank: {questions.length} {questions.length === 1 ? "Total Question" : "Total Questions"}
         </div>
-
 
         {!quizStarted ? (
           <>
@@ -94,6 +111,8 @@ export default function QuizPage() {
                 onChange={handleChange}
                 className="w-full border px-3 py-2 rounded"
               />
+
+              {/* Options */}
               {form.options.map((opt, index) => (
                 <input
                   key={index}
@@ -104,6 +123,24 @@ export default function QuizPage() {
                   className="w-full border px-3 py-2 rounded"
                 />
               ))}
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (form.options.length >= 6) {
+                    alert("Maximum 6 options allowed.");
+                    return;
+                  }
+                  setForm((prev) => ({
+                    ...prev,
+                    options: [...prev.options, ""],
+                  }));
+                }}
+                className="mt-2 text-sm text-blue-600 hover:underline"
+              >
+                + Add Option
+              </button>
+
               <input
                 type="text"
                 name="answer"
@@ -112,6 +149,7 @@ export default function QuizPage() {
                 onChange={handleChange}
                 className="w-full border px-3 py-2 rounded"
               />
+
               <button
                 onClick={addQuestion}
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
@@ -119,7 +157,6 @@ export default function QuizPage() {
                 Add Question
               </button>
             </div>
-
 
             {/* Start Quiz */}
             <div className="pt-6 text-center">

@@ -28,7 +28,7 @@ CREATE TABLE Questions (
 
 CREATE TABLE Answers (
     QuestionID INTEGER NOT NULL,
-    AnswerNumber INTEGER NOT NULL CHECK(AnswerNumber <= 4 and AnswerNumber >= 1),
+    AnswerNumber INTEGER NOT NULL,
     ResponseText VARCHAR(200) NOT NULL,
     IsCorrect      BOOLEAN NOT NULL,
     PRIMARY KEY (QuestionID, AnswerNumber),
@@ -226,3 +226,18 @@ JOIN
     Teams AS AwayTeam ON Games.AwayTeamID = AwayTeam.TeamID
 LEFT JOIN
     Teams AS Winner ON Games.Winner = Winner.TeamID;
+
+-- TRIGGER
+DROP TRIGGER EnforceMaxFourAnswers;
+
+CREATE TRIGGER EnforceMaxFourAnswers
+    BEFORE INSERT ON Answers
+    REFERENCING NEW AS N
+    FOR EACH ROW
+    WHEN ((SELECT COUNT(*) FROM Answers WHERE QuestionID = N.QuestionID) >= 4)
+    SIGNAL SQLSTATE '75001' 
+    SET MESSAGE_TEXT = 'Cannot insert more than 4 answers for a single question.';
+
+SELECT TRIGNAME, TRIGSCHEMA, ENABLED 
+FROM SYSCAT.TRIGGERS 
+WHERE TRIGNAME = 'ENFORCEMAXFOURANSWERS';

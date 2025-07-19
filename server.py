@@ -325,6 +325,71 @@ def answered_all_questions_as_user():
         "message": "Successfully found users who answered all questions as current user",
         "results": results
     }), 200
+    
+@app.route("/api/question", methods=["POST"])
+def add_question():
+    data = request.get_json()
+    username = data.get("username")
+    question_text = data.get("questionText")
+    answers = data.get("answers", [])
+
+    # Get UserID
+    user_replacements = {"{{USERNAME}}": username}
+    user_results = run_query_from_template("get_user_id_template.sql", user_replacements)
+    print("User query result:", user_results)
+    if not user_results:
+        return jsonify({"error": "User not found"}), 404
+
+    author_id = user_results[0].get('USERID')
+    if not author_id:
+        return jsonify({"error": "Could not retrieve user ID"}), 500
+
+    # Escape single quotes for SQL-safe input
+    question_text_escaped = question_text.replace("'", "''")
+
+    # Insert question
+    question_replacements = {
+        "{{AUTHOR_ID}}": str(author_id),
+        "{{QUESTION_TEXT}}": question_text_escaped
+    }
+    question_insert_result = run_query_from_template("add_question_template.sql", question_replacements)
+    print("Insert question result:", question_insert_result)
+
+    # Get inserted QuestionID
+    get_question_id_replacements = {
+        "{{AUTHOR_ID}}": str(author_id),
+        "{{QUESTION_TEXT}}": question_text_escaped
+    }
+    question_id_results = run_query_from_template("get_latest_question_id_template.sql", get_question_id_replacements)
+    print("Get question ID result:", question_id_results)
+
+    if not question_id_results:
+        return jsonify({"error": "Failed to retrieve question ID"}), 500
+
+    question_id = question_id_results[0].get('QUESTIONID')
+    if not question_id:
+        return jsonify({"error": "Could not retrieve question ID"}), 500
+
+    # Insert answers
+    for i, answer in enumerate(answers):
+        answer_text_escaped = answer["text"].replace("'", "''")
+        answer_replacements = {
+            "{{QUESTION_ID}}": str(question_id),
+            "{{ANSWER_NUMBER}}": str(i + 1),
+            "{{RESPONSE_TEXT}}": answer_text_escaped,
+            "{{IS_CORRECT}}": "TRUE" if answer.get("isCorrect") else "FALSE"
+        }
+        result = run_query_from_template("add_answer_template.sql", answer_replacements)
+        print(f"Answer insert result for answer {i+1}:", result)
+
+    os.system('./runSqlCmd.sh .listUserTable.sql')
+    os.system('./runSqlCmd.sh .listQuestions.sql')
+
+    print("Add question with answers completed successfully")
+    return jsonify({
+        "message": "Question and answers added successfully",
+        "questionId": question_id
+    }), 201
 
 if __name__ == "__main__":
     os.system("./setupSchema.sh")
