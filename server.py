@@ -257,6 +257,18 @@ def search_team():
         "results": team_results
     }), 200
 
+@app.route("/api/leaderboard", methods=["GET"])
+def get_leaderboard():
+    try:
+        results = run_query_from_template("leaderboard.sql", {})
+        return jsonify({
+            "message": "Leaderboard retrieved successfully",
+            "results": results
+        }), 200
+    except Exception as e:
+        print(f"Error retrieving leaderboard: {str(e)}")
+        return jsonify({"error": "Failed to retrieve leaderboard"}), 500
+
 # games
 @app.route("/api/games/stats", methods=["GET"])
 def get_games_stats():
@@ -464,4 +476,4 @@ if __name__ == "__main__":
     #     results = parse_sql_shell_output()
     #     print("User results:", results)
         
-    app.run(debug=True, port=5002)
+    app.run(debug=True, port=5000)

@@ -7,6 +7,7 @@ import ProfilePage from "./components/ProfilePage";
 import SpecialQueriesPage from "./components/SearchQueriesPage";
 import Layout from "./components/Layout";
 import GamesPage from "./components/GamesPage";
+import Leaderboard from "./components/Leaderboard";
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/quiz" element={<QuizPage />} />
         <Route path="/special-queries" element={<SpecialQueriesPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
       </Route>
     </Routes>
   );

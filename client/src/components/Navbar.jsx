@@ -24,6 +24,9 @@ export default function Navbar() {
             <li className="hover:text-blue-600 cursor-pointer transition" onClick={() => navigate("/profile")}>
               Profile
             </li>
+            <li className="hover:text-blue-600 cursor-pointer transition" onClick={() => navigate("/leaderboard")}>
+              Leaderboard
+            </li>
           </ul>
         </div>
       </nav>
