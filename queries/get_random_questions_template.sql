@@ -11,6 +11,6 @@ WHERE q.QuestionID IN (
     SELECT QuestionID 
     FROM Questions 
     ORDER BY RANDOM() 
-    FETCH FIRST 7 ROWS ONLY
+    LIMIT 7
 )
-ORDER BY q.QuestionID, a.AnswerNumber;
+ORDER BY RANDOM();

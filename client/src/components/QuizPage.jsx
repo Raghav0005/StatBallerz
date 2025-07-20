@@ -6,16 +6,18 @@ import { insertQuestion, fetchRandomQuiz } from "../api";
 export default function QuizPage() {
   const { user } = useAuth();
 
+  const [numQuestions, setNumQuestions] = useState(20);
   const [questions, setQuestions] = useState([]);
   const [form, setForm] = useState({
     question: "",
-    options: [""], // Start with one answer box
+    options: ["", "", "", ""],
     answer: ""
   });
   const [quizStarted, setQuizStarted] = useState(false);
   const [userAnswers, setUserAnswers] = useState([]);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [addingQuestion, setAddingQuestion] = useState(false); // New loading state for adding questions
   const [error, setError] = useState(null);
 
   if (!user) return <Navigate to="/" replace />;
@@ -48,6 +50,8 @@ export default function QuizPage() {
       return;
     }
 
+    setAddingQuestion(true); // Start loading
+
     try {
       const answers = options.map((option) => ({
         text: option.trim(),
@@ -59,10 +63,10 @@ export default function QuizPage() {
       if (result.error) {
         alert(`Error adding question: ${result.error}`);
       } else {
-        setQuestions([...questions, { question, options, answer }]);
+        setNumQuestions(numQuestions + 1);
         setForm({
           question: "",
-          options: [""], // Reset to one empty box
+          options: ["","","",""],
           answer: ""
         });
         alert("Question added successfully!");
@@ -70,16 +74,18 @@ export default function QuizPage() {
     } catch (error) {
       console.error("Unexpected error:", error);
       alert("An unexpected error occurred while adding the question.");
+    } finally {
+      setAddingQuestion(false); // Stop loading
     }
   };
 
   const startQuiz = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const result = await fetchRandomQuiz();
-      
+
       if (result.error) {
         setError(result.error);
         alert(`Error loading quiz: ${result.error}`);
@@ -87,7 +93,7 @@ export default function QuizPage() {
       }
 
       const data = result.data;
-      
+
       // Transform backend data to match frontend expectations
       const transformedQuestions = data.questions.map(q => ({
         questionId: q.questionId,
@@ -105,11 +111,11 @@ export default function QuizPage() {
       setUserAnswers(Array(transformedQuestions.length).fill(""));
       setQuizStarted(true);
       setSubmitted(false);
-      
+
       if (data.warning) {
         alert(`Warning: ${data.warning}`);
       }
-      
+
     } catch (error) {
       console.error("Error fetching quiz:", error);
       setError(`Failed to load quiz: ${error.message}`);
@@ -143,7 +149,7 @@ export default function QuizPage() {
     <div className="min-h-screen bg-gray-100 pt-16 pb-16">
       <div className="max-w-2xl mx-auto mt-10 p-6 border rounded bg-white shadow space-y-6">
         <h1 className="text-2xl font-bold text-center">NBA Trivia Quiz</h1>
-        
+
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
             {error}
@@ -151,7 +157,7 @@ export default function QuizPage() {
         )}
 
         <div className="text-center text-gray-700 font-medium">
-          Question Bank: {questions.length} {questions.length === 1 ? "Total Question" : "Total Questions"}
+          Question Bank: {numQuestions} {numQuestions === 1 ? "Total Question" : "Total Questions"}
         </div>
 
         {!quizStarted ? (
@@ -165,6 +171,7 @@ export default function QuizPage() {
                 value={form.question}
                 onChange={handleChange}
                 className="w-full border px-3 py-2 rounded"
+                disabled={addingQuestion} // Disable input while adding
               />
 
               {/* Options */}
@@ -176,26 +183,9 @@ export default function QuizPage() {
                   value={opt}
                   onChange={(e) => handleOptionChange(index, e.target.value)}
                   className="w-full border px-3 py-2 rounded"
+                  disabled={addingQuestion} // Disable input while adding
                 />
               ))}
-
-              <button
-                type="button"
-                onClick={() => {
-                  if (form.options.length >= 6) {
-                    alert("Maximum 6 options allowed.");
-                    return;
-                  }
-                  setForm((prev) => ({
-                    ...prev,
-                    options: [...prev.options, ""],
-                  }));
-                }}
-                className="mt-2 text-sm text-blue-600 hover:underline"
-              >
-                + Add Option
-              </button>
-
               <input
                 type="text"
                 name="answer"
@@ -203,13 +193,15 @@ export default function QuizPage() {
                 value={form.answer}
                 onChange={handleChange}
                 className="w-full border px-3 py-2 rounded"
+                disabled={addingQuestion} // Disable input while adding
               />
 
               <button
                 onClick={addQuestion}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                disabled={addingQuestion} // Disable button while adding
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
               >
-                Add Question
+                {addingQuestion ? "Adding Question..." : "Add Question"}
               </button>
             </div>
 
@@ -281,7 +273,7 @@ export default function QuizPage() {
                     return (
                       <div key={q.questionId || index} className="border p-4 rounded-lg">
                         <p className="font-medium mb-2">Q{index + 1}: {q.question}</p>
-                        
+
                         <div className="mb-2">
                           <span className="font-semibold">Your answer: </span>
                           <span className={isCorrect ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
@@ -289,14 +281,14 @@ export default function QuizPage() {
                             {isCorrect ? " ✓" : " ✗"}
                           </span>
                         </div>
-                        
+
                         {!isCorrect && (
                           <div className="mb-2">
                             <span className="font-semibold">Correct answer: </span>
                             <span className="text-green-600 font-medium">{q.answer}</span>
                           </div>
                         )}
-                        
+
                         <div className="text-sm text-gray-600 mt-2">
                           <strong>All options:</strong> {q.options.join(", ")}
                         </div>
