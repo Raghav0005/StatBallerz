@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
-import { getAnsweredAllQuestionsAsUser } from "../api";
+import { getAnsweredAllQuestionsAsUser, getAnsweredAllCorrectSingleAttempt } from "../api";
 
 export default function SpecialQueriesPage() {
   const { user } = useAuth();
@@ -9,30 +9,113 @@ export default function SpecialQueriesPage() {
     return <Navigate to="/" replace />;
   }
 
-  const [users, setUsers] = useState([]);
+  const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedQuery, setSelectedQuery] = useState("");
 
-  const handleAnsweredAllQuestionsQuery = async () => {
-    setLoading(true);
-    try {
-      const data = await getAnsweredAllQuestionsAsUser(user.username);
-      if (data.error) {
-        alert(`❌ Query failed: ${data.error}`);
+  const queryOptions = [
+    {
+      value: "division",
+      label: "Division Query: Users Who Answered All Your Questions",
+      description: "This query finds all users who have answered every question that you have answered in quizzes."
+    },
+    {
+      value: "all-correct-single",
+      label: "Perfect Single Attempt: Users Who Got All Questions Correct in a Single Attempt",
+      description: "This query finds all users who answered all questions correctly in a single quiz attempt."
+    }
+  ];
+
+  // Automatically run query when selection changes
+  useEffect(() => {
+    const runQuery = async () => {
+      if (!selectedQuery) {
+        setResults([]);
         return;
       }
+      
+      setLoading(true);
+      setResults([]); // Clear previous results
+      
+      try {
+        if (selectedQuery === "division") {
+          const data = await getAnsweredAllQuestionsAsUser(user.username);
+          if (data.error) {
+            alert(`❌ Query failed: ${data.error}`);
+            return;
+          }
 
-      if (data.results.length > 0) {
-        setUsers(data.results);
-      } else {
-        alert("❌ No users found who have answered all the same questions as you.");
-        setUsers([]);
+          if (data.results.length > 0) {
+            setResults(data.results);
+          } else {
+            alert("❌ No users found who have answered all the same questions as you.");
+            setResults([]);
+          }
+        } else if (selectedQuery === "all-correct-single") {
+          const data = await getAnsweredAllCorrectSingleAttempt();
+          if (data.error) {
+            alert(`❌ Query failed: ${data.error}`);
+            return;
+          }
+
+          if (data.results.length > 0) {
+            setResults(data.results);
+          } else {
+            alert("❌ No users found who answered all questions correctly in a single attempt.");
+            setResults([]);
+          }
+        }
+      } catch (err) {
+        console.error("Query error:", err);
+        alert("❌ An error occurred while running the query. Please try again.");
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Special query error:", err);
-      alert("❌ An error occurred while running the query. Please try again.");
-    } finally {
-      setLoading(false);
+    };
+
+    runQuery();
+  }, [selectedQuery, user.username]);
+
+  const handleQueryChange = (newQuery) => {
+    setResults([]); // Clear results immediately when changing query
+    setSelectedQuery(newQuery);
+  };
+
+  const getResultHeaders = () => {
+    if (selectedQuery === "division") {
+      return ["Username"];
+    } else if (selectedQuery === "all-correct-single") {
+      return ["Username", "Questions Correct", "Leaderboard Rank"];
     }
+    return [];
+  };
+
+  const renderResultRow = (result, idx) => {
+    if (selectedQuery === "division") {
+      return (
+        <tr key={idx} className="bg-white border-t hover:bg-gray-50">
+          <td className="p-4">{result.USERNAME || result.Username}</td>
+        </tr>
+      );
+    } else if (selectedQuery === "all-correct-single") {
+      return (
+        <tr key={idx} className="bg-white border-t hover:bg-gray-50">
+          <td className="p-4">{result.USERNAME || result.Username}</td>
+          <td className="p-4">{result.QUESTIONSCORRECT || result.QuestionsCorrect}</td>
+          <td className="p-4">{result.LEADERBOARDRANK || result.LeaderboardRank}</td>
+        </tr>
+      );
+    }
+    return null;
+  };
+
+  const getResultTitle = () => {
+    if (selectedQuery === "division") {
+      return `Users Who Have Answered All Your Questions (${results.length} found)`;
+    } else if (selectedQuery === "all-correct-single") {
+      return `Users Who Got All Questions Correct in Single Attempt (${results.length} found)`;
+    }
+    return "Query Results";
   };
 
   return (
@@ -42,42 +125,63 @@ export default function SpecialQueriesPage() {
         
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
           <h2 className="text-xl font-semibold text-gray-700 mb-4">
-            Division Query: Users Who Answered All Your Questions
+            Select a Query to Run
           </h2>
-          <p className="text-gray-600 mb-4">
-            This query finds all users who have answered every question that you have answered in quizzes.
-          </p>
-          <button
-            onClick={handleAnsweredAllQuestionsQuery}
-            disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition disabled:opacity-50"
-          >
-            {loading ? "Running Query..." : "Find Users Who Answered All My Questions"}
-          </button>
+          
+          <div className="mb-4">
+            <label htmlFor="query-select" className="block text-sm font-medium text-gray-700 mb-2">
+              Choose Query:
+            </label>
+            <select
+              id="query-select"
+              value={selectedQuery}
+              onChange={(e) => handleQueryChange(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              disabled={loading}
+            >
+              <option value="">-- Select a query --</option>
+              {queryOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {selectedQuery && (
+            <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-blue-800 text-sm">
+                <strong>Description:</strong> {queryOptions.find(q => q.value === selectedQuery)?.description}
+              </p>
+              {loading && (
+                <p className="text-blue-600 text-sm mt-2 font-medium">
+                  🔄 Running query...
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </section>
 
       <main className="max-w-4xl mx-auto mt-8 px-6">
-        {users.length > 0 ? (
+        {results.length > 0 ? (
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
             <div className="bg-gray-200 px-6 py-4">
               <h3 className="text-lg font-semibold text-gray-800">
-                Users Who Have Answered All Your Questions ({users.length} found)
+                {getResultTitle()}
               </h3>
             </div>
             <div className="overflow-auto">
               <table className="w-full text-sm text-left text-gray-700">
                 <thead className="bg-gray-100 text-gray-900 font-semibold">
                   <tr>
-                    <th className="p-4">Username</th>
+                    {getResultHeaders().map((header, idx) => (
+                      <th key={idx} className="p-4">{header}</th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map((userResult, idx) => (
-                    <tr key={idx} className="bg-white border-t hover:bg-gray-50">
-                      <td className="p-4">{userResult.USERNAME || userResult.Username}</td>
-                    </tr>
-                  ))}
+                  {results.map((result, idx) => renderResultRow(result, idx))}
                 </tbody>
               </table>
             </div>
@@ -85,7 +189,12 @@ export default function SpecialQueriesPage() {
         ) : (
           <div className="bg-white rounded-lg shadow-lg p-8 text-center">
             <p className="text-gray-600">
-              Click the button above to run the special query and see results here.
+              {loading
+                ? "🔄 Running query, please wait..."
+                : selectedQuery 
+                  ? "Query completed. No results found."
+                  : "Select a query from the dropdown above to get started."
+              }
             </p>
           </div>
         )}

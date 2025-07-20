@@ -337,6 +337,20 @@ def answered_all_questions_as_user():
         "message": "Successfully found users who answered all questions as current user",
         "results": results
     }), 200
+
+@app.route("/api/special-queries/answered-all-correct-single-attempt")
+def answered_all_correct_single_attempt():
+    try:
+        results = run_query_from_template("answered_all_correct_single_attempt.sql", {})
+        
+        print("Answered all correct single attempt results:", results)
+        return jsonify({
+            "message": "Successfully found users who answered all questions correctly in a single attempt",
+            "results": results
+        }), 200
+    except Exception as e:
+        print(f"Error retrieving answered all correct single attempt: {str(e)}")
+        return jsonify({"error": "Failed to retrieve results"}), 500
     
 @app.route("/api/question", methods=["POST"])
 def add_question():
@@ -454,8 +468,8 @@ def get_random_quiz():
         return jsonify({"error": "Failed to retrieve quiz questions"}), 500
 
 if __name__ == "__main__":
-    os.system("./setupSchema.sh")
-    os.system("mkdir .results")
+    # os.system("./setupSchema.sh")
+    # os.system("mkdir .results")
     
     # test user signup + delete
     # with app.test_client() as client:
