@@ -23,9 +23,7 @@ export default function SearchPage() {
 
   const playerColumns = [
     { key: "PNAME", header: "Name" },
-    { key: "BIRTHDATE", header: "Birth Date" },
     { key: "HEIGHT", header: "Height" },
-    { key: "BODYWEIGHT", header: "Weight" },
     { key: "DRAFTYEAR", header: "Draft Year" },
     { key: "DRAFTROUND", header: "Round" },
     { key: "DRAFTPICK", header: "Pick" },
