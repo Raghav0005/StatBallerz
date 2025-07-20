@@ -169,6 +169,22 @@ export async function getAnsweredAllQuestionsAsUser(username) {
   }
 }
 
+export async function getAnsweredAllCorrectSingleAttempt() {
+  const res = await fetch("/api/special-queries/answered-all-correct-single-attempt");
+
+  if (res.ok) {
+    const data = await res.json();
+    console.log("getAnsweredAllCorrectSingleAttempt success:", data);
+    return data;
+  } else if (res.status === 500) {
+    console.log("getAnsweredAllCorrectSingleAttempt server error");
+    return { error: "Failed to retrieve results" };
+  } else {
+    console.error("getAnsweredAllCorrectSingleAttempt failed:", res.status);
+    throw new Error("Special query failed");
+  }
+}
+
 export async function insertQuestion(username, questionText, answers) {
   const requestData = {
     username: username,
