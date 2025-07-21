@@ -1,0 +1,1 @@
+INSERT INTO QuizAttemptItems (AttemptID, QuestionID, AnswerNumber) VALUES ({{ATTEMPT_ID}}, {{QUESTION_ID}}, {{ANSWER_NUMBER}});

@@ -351,7 +351,7 @@ def answered_all_correct_single_attempt():
     except Exception as e:
         print(f"Error retrieving answered all correct single attempt: {str(e)}")
         return jsonify({"error": "Failed to retrieve results"}), 500
-    
+
 @app.route("/api/question", methods=["POST"])
 def add_question():
     data = request.get_json()
@@ -467,9 +467,100 @@ def get_random_quiz():
         print(f"Error getting random quiz: {str(e)}")
         return jsonify({"error": "Failed to retrieve quiz questions"}), 500
 
+@app.route("/api/quiz/submit", methods=["POST"])
+def submit_quiz_attempt():
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({"error": "Request body is required"}), 400
+        
+        username = data.get("username")
+        score = data.get("score")
+        attempt_items = data.get("attemptItems", [])
+        
+        if not username:
+            return jsonify({"error": "Username is required"}), 400
+        
+        if score is None:
+            return jsonify({"error": "Score is required"}), 400
+        
+        # Validate that score is a non-negative integer
+        if not isinstance(score, int) or score < 0:
+            return jsonify({"error": "Score must be a non-negative integer"}), 400
+        
+        # First, check if user exists and get their UserID
+        user_query_replacements = {"{{USERNAME}}": username}
+        user_results = run_query_from_template("get_user_id_template.sql", user_query_replacements)
+        
+        print(f"User query results: {user_results}")
+        
+        if not user_results or len(user_results) == 0:
+            return jsonify({"error": "User not found"}), 404
+        
+        user_id = user_results[0]['USERID']  # Get UserID from dictionary
+        print(f"Found user_id: {user_id}")
+        
+        # Insert the quiz attempt - Convert integers to strings for template replacement
+        attempt_replacements = {
+            "{{USER_ID}}": str(user_id),
+            "{{SCORE}}": str(score)
+        }
+        attempt_results = run_query_from_template("insert_quiz_attempt_template.sql", attempt_replacements)
+        print(f"Insert attempt results: {attempt_results}")
+        
+        # Get the generated AttemptID
+        attempt_id_query_replacements = {"{{USER_ID}}": str(user_id)}
+        attempt_id_results = run_query_from_template("get_latest_attempt_id_template.sql", attempt_id_query_replacements)
+        
+        print(f"Attempt ID query results: {attempt_id_results}")
+        
+        if not attempt_id_results or len(attempt_id_results) == 0:
+            return jsonify({"error": "Failed to retrieve attempt ID"}), 500
+        
+        attempt_id = attempt_id_results[0]['ATTEMPTID']  # Get AttemptID from dictionary
+        print(f"Found attempt_id: {attempt_id}")
+        
+        # Insert quiz attempt items - Convert all integers to strings
+        for item in attempt_items:
+            question_id = item.get("questionId")
+            answer_number = item.get("answerNumber")
+            
+            if question_id is not None and answer_number is not None:
+                item_replacements = {
+                    "{{ATTEMPT_ID}}": str(attempt_id),
+                    "{{QUESTION_ID}}": str(question_id),
+                    "{{ANSWER_NUMBER}}": str(answer_number)
+                }
+                run_query_from_template("insert_quiz_attempt_item_template.sql", item_replacements)
+        
+        return jsonify({
+            "message": "Quiz attempt submitted successfully",
+            "attemptId": attempt_id,
+            "score": score
+        }), 200
+        
+    except Exception as e:
+        print(f"Error submitting quiz attempt: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+
+@app.route("/api/questions/count")
+def get_question_count():
+    try:
+        # Run a query to count total questions in the database
+        results = run_query_from_template("count_questions_template.sql", {})
+        print("Question count results:", results)
+        count = int(results[0]['COUNT']) if results and 'COUNT' in results[0] else 0
+        
+        return jsonify({"count": count}), 200
+    except Exception as e:
+        print("Error fetching question count:", str(e))
+        return jsonify({"error": "Failed to fetch question count"}), 500
+    
+
 if __name__ == "__main__":
-    # os.system("./setupSchema.sh")
-    # os.system("mkdir .results")
+    #os.system("./setupSchema.sh")
+    #os.system("mkdir .results")
     
     # test user signup + delete
     # with app.test_client() as client:

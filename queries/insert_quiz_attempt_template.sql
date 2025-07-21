@@ -1,0 +1,1 @@
+INSERT INTO QuizAttempts (UserID, AttemptScore) VALUES ({{USER_ID}}, {{SCORE}});

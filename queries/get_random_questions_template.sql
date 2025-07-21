@@ -13,4 +13,4 @@ WHERE q.QuestionID IN (
     ORDER BY RANDOM() 
     LIMIT 7
 )
-ORDER BY RANDOM();
+ORDER BY q.QuestionID, a.AnswerNumber;

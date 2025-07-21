@@ -1,0 +1,4 @@
+SELECT AttemptID FROM QuizAttempts 
+WHERE UserID = {{USER_ID}} 
+ORDER BY AttemptID DESC 
+LIMIT 1;

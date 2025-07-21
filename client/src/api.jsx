@@ -189,7 +189,7 @@ export async function insertQuestion(username, questionText, answers) {
   const requestData = {
     username: username,
     questionText: questionText,
-    answers: answers // Array of {text: string, isCorrect: boolean}
+    answers: answers // Array of {text: string, isCorrect: string}
   };
 
   const res = await fetch("/api/question", {
@@ -236,5 +236,74 @@ export async function fetchRandomQuiz() {
     console.error("fetchRandomQuiz failed:", res.status);
     const errorData = await res.json().catch(() => ({}));
     return { error: errorData.error || "Failed to fetch quiz questions." };
+  }
+}
+
+export async function submitQuizAttempt(username, questions, userAnswers) {
+  let score = 0;
+  const attemptItems = [];
+  
+  questions.forEach((question, index) => {
+    const userAnswer = userAnswers[index];
+    const isCorrect = question.answer === userAnswer;
+    
+    if (isCorrect) {
+      score++;
+    }
+    
+    const answerNumber = question.options.findIndex(option => option === userAnswer) + 1;
+    
+    if (answerNumber > 0) {
+      attemptItems.push({
+        questionId: question.questionId,
+        answerNumber: answerNumber
+      });
+    }
+  });
+
+  const requestData = {
+    username: username,
+    score: score,
+    attemptItems: attemptItems
+  };
+
+  const res = await fetch("/api/quiz/submit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(requestData),
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    console.log("submitQuizAttempt success:", data);
+    return { data };
+  } else if (res.status === 400) {
+    const errorData = await res.json();
+    console.log("submitQuizAttempt bad request:", errorData.error);
+    return { error: errorData.error };
+  } else if (res.status === 404) {
+    console.log("submitQuizAttempt user not found");
+    return { error: "User not found." };
+  } else {
+    console.error("submitQuizAttempt failed:", res.status);
+    const errorData = await res.json().catch(() => ({}));
+    return { error: errorData.error || "Failed to submit quiz attempt." };
+  }
+}
+
+export async function fetchQuestionCount() {
+  const res = await fetch("/api/questions/count", {
+    method: "GET",
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    console.log("fetchQuestionCount success:", data);
+    return { data };
+  } else {
+    console.error("fetchQuestionCount failed:", res.status);
+    throw new Error("Fetch question count failed");
   }
 }
