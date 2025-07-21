@@ -351,7 +351,38 @@ def answered_all_correct_single_attempt():
     except Exception as e:
         print(f"Error retrieving answered all correct single attempt: {str(e)}")
         return jsonify({"error": "Failed to retrieve results"}), 500
-
+    
+@app.route("/api/special-queries/player-stats-intersection", methods=["GET"])
+def player_stats_intersection():
+    params = request.args
+    player1 = params.get("player1")
+    stat1 = params.get("stat1")
+    player2 = params.get("player2")
+    stat2 = params.get("stat2")
+    if not all([player1, stat1, player2, stat2]):
+        return jsonify({"error": "player1, stat1, player2, and stat2 parameters are required"}), 400
+    
+    # Validate player names exist in database
+    player1_validation = run_query_from_template("validate_player_name_template.sql", {"{{PLAYER_NAME}}": player1})
+    player2_validation = run_query_from_template("validate_player_name_template.sql", {"{{PLAYER_NAME}}": player2})
+    
+    if not player1_validation or player1_validation[0].get('PLAYERCOUNT', '0') == '0':
+        return jsonify({"error": f"Player '{player1}' not found in database"}), 404
+    
+    if not player2_validation or player2_validation[0].get('PLAYERCOUNT', '0') == '0':
+        return jsonify({"error": f"Player '{player2}' not found in database"}), 404
+    
+    replacements = {
+        "{{PLAYER1}}": player1,
+        "{{STAT1}}": stat1,
+        "{{PLAYER2}}": player2,
+        "{{STAT2}}": stat2,
+    }
+    results = run_query_from_template("player_stats_intersection_template.sql", replacements)
+    return jsonify({
+        "message": "Players matching stats intersection retrieved successfully",
+        "results": results
+    }), 200
 @app.route("/api/question", methods=["POST"])
 def add_question():
     data = request.get_json()
@@ -559,8 +590,8 @@ def get_question_count():
     
 
 if __name__ == "__main__":
-    #os.system("./setupSchema.sh")
-    #os.system("mkdir .results")
+    os.system("./setupSchema.sh")
+    os.system("mkdir .results")
     
     # test user signup + delete
     # with app.test_client() as client:

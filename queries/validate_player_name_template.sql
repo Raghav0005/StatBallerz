@@ -1,0 +1,3 @@
+SELECT COUNT(*) as PlayerCount
+FROM ALL_PLAYER_INFO
+WHERE PName = '{{PLAYER_NAME}}';

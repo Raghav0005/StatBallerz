@@ -185,6 +185,59 @@ export async function getAnsweredAllCorrectSingleAttempt() {
   }
 }
 
+export async function getPlayerStatsIntersection(player1, stat1, player2, stat2) {
+  // Validate that both player names have first and last name (at least 2 words)
+  const validatePlayerName = (name) => {
+    const trimmed = name.trim();
+    const words = trimmed.split(/\s+/);
+    return words.length >= 2 && words.every(word => word.length > 0);
+  };
+
+  // Format individual words to Title Case
+  const formatPlayerName = (name) => {
+    return name
+      .trim()
+      .toLowerCase()
+      .split(/\s+/)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
+  if (!validatePlayerName(player1)) {
+    return { error: "Player 1 must include both first and last name" };
+  }
+
+  if (!validatePlayerName(player2)) {
+    return { error: "Player 2 must include both first and last name" };
+  }
+
+  // Format names to Title Case after validation
+  const formattedPlayer1 = formatPlayerName(player1);
+  const formattedPlayer2 = formatPlayerName(player2);
+
+  const query = `/api/special-queries/player-stats-intersection?player1=${encodeURIComponent(
+    formattedPlayer1
+  )}&stat1=${encodeURIComponent(stat1)}&player2=${encodeURIComponent(
+    formattedPlayer2
+  )}&stat2=${encodeURIComponent(stat2)}`;
+  const res = await fetch(query);
+  if (res.ok) {
+    const data = await res.json();
+    console.log("getPlayerStatsIntersection success:", data);
+    return data;
+  } else if (res.status === 400) {
+    console.log("getPlayerStatsIntersection bad request");
+    return { error: "All parameters required" };
+  } else if (res.status === 404) {
+    const errorData = await res.json();
+    console.log("getPlayerStatsIntersection player not found");
+    return { error: errorData.error };
+  } else {
+    console.error("getPlayerStatsIntersection failed:", res.status);
+    throw new Error("Special query failed");
+  }
+}
+
 export async function insertQuestion(username, questionText, answers) {
   const requestData = {
     username: username,
