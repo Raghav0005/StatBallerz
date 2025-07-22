@@ -190,7 +190,7 @@ export async function getPlayerStatsIntersection(player1, stat1, player2, stat2)
   const validatePlayerName = (name) => {
     const trimmed = name.trim();
     const words = trimmed.split(/\s+/);
-    return words.length >= 2 && words.every(word => word.length > 0);
+    return words.length >= 2 && words.every((word) => word.length > 0);
   };
 
   // Format individual words to Title Case
@@ -217,9 +217,9 @@ export async function getPlayerStatsIntersection(player1, stat1, player2, stat2)
 
   const query = `/api/special-queries/player-stats-intersection?player1=${encodeURIComponent(
     formattedPlayer1
-  )}&stat1=${encodeURIComponent(stat1)}&player2=${encodeURIComponent(
-    formattedPlayer2
-  )}&stat2=${encodeURIComponent(stat2)}`;
+  )}&stat1=${encodeURIComponent(stat1)}&player2=${encodeURIComponent(formattedPlayer2)}&stat2=${encodeURIComponent(
+    stat2
+  )}`;
   const res = await fetch(query);
   if (res.ok) {
     const data = await res.json();
@@ -242,7 +242,7 @@ export async function insertQuestion(username, questionText, answers) {
   const requestData = {
     username: username,
     questionText: questionText,
-    answers: answers // Array of {text: string, isCorrect: string}
+    answers: answers,
   };
 
   const res = await fetch("/api/question", {
@@ -295,21 +295,21 @@ export async function fetchRandomQuiz() {
 export async function submitQuizAttempt(username, questions, userAnswers) {
   let score = 0;
   const attemptItems = [];
-  
+
   questions.forEach((question, index) => {
     const userAnswer = userAnswers[index];
     const isCorrect = question.answer === userAnswer;
-    
+
     if (isCorrect) {
       score++;
     }
-    
-    const answerNumber = question.options.findIndex(option => option === userAnswer) + 1;
-    
+
+    const answerNumber = question.options.findIndex((option) => option === userAnswer) + 1;
+
     if (answerNumber > 0) {
       attemptItems.push({
         questionId: question.questionId,
-        answerNumber: answerNumber
+        answerNumber: answerNumber,
       });
     }
   });
@@ -317,7 +317,7 @@ export async function submitQuizAttempt(username, questions, userAnswers) {
   const requestData = {
     username: username,
     score: score,
-    attemptItems: attemptItems
+    attemptItems: attemptItems,
   };
 
   const res = await fetch("/api/quiz/submit", {

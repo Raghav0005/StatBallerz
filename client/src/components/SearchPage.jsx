@@ -112,7 +112,7 @@ export default function SearchPage() {
 
             <div className="flex-grow">
               <label htmlFor="query" className="block text-sm font-medium text-gray-700 mb-1">
-                Search Query
+                Search
               </label>
               <div className="flex shadow-lg rounded-lg overflow-hidden border border-gray-300 bg-white">
                 <input
@@ -167,7 +167,6 @@ export default function SearchPage() {
                               <tr>
                                 <th className="p-2 text-left">Player Name</th>
                                 <th className="p-2 text-left">Height</th>
-                                <th className="p-2 text-left">Weight (kg)</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -175,7 +174,6 @@ export default function SearchPage() {
                                 <tr key={playerIdx} className="border-t">
                                   <td className="p-2">{player.PNAME || "N/A"}</td>
                                   <td className="p-2">{formatHeight(player.HEIGHT)}</td>
-                                  <td className="p-2">{player.BODYWEIGHT || "N/A"}</td>
                                 </tr>
                               ))}
                             </tbody>

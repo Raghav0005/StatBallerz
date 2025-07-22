@@ -175,7 +175,7 @@ export default function GamesPage() {
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="text-lg font-semibold mb-2">Game Analysis Results ({results.length} games found)</h3>
               <p className="text-sm text-gray-600 mb-4">
-                Average {statDisplayNames[displayedStat]} per player in each game, ordered by most recent games
+                Average {statDisplayNames[displayedStat]} per player in each game within the selected date range.
               </p>
               <div className="overflow-x-auto">
                 <table className="min-w-full table-auto">
