@@ -42,6 +42,16 @@ export default function QuizPage() {
 
   if (!user) return <Navigate to="/" replace />;
 
+  // Function to shuffle an array
+  const shuffleArray = (array) => {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+  };
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -164,10 +174,14 @@ export default function QuizPage() {
         
         console.log('Found correct answer:', correctAnswer);
         
+        // Extract all options and shuffle them
+        const allOptions = q.answers.map(answer => answer.responseText);
+        const shuffledOptions = shuffleArray(allOptions);
+        
         const transformedQuestion = {
           questionId: q.questionId,
           question: q.questionText,
-          options: q.answers.map(answer => answer.responseText),
+          options: shuffledOptions,
           answer: correctAnswer ? correctAnswer.responseText : "NO CORRECT ANSWER FOUND"
         };
         
@@ -247,9 +261,9 @@ export default function QuizPage() {
           </div>
         )}
 
-        <div className="text-center text-gray-700 font-medium">
+        {/* <div className="text-center text-gray-700 font-medium">
           Question Bank: {numQuestions === -1 ? "Loading..." : `${numQuestions} Total Questions`}
-        </div>
+        </div> */}
 
         {!quizStarted ? (
           <>
