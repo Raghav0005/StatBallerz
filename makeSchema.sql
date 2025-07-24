@@ -145,9 +145,7 @@ CREATE INDEX idx_games_date ON Games(GameDate);
 CREATE INDEX idx_question_txt ON Questions(QuestionText);
 CREATE INDEX idx_team_name ON Teams(TeamName);
 
-CREATE INDEX idx_playedin_points ON PlayedIn(Points);
-CREATE INDEX idx_playedin_assists ON PlayedIn(Assists);
-CREATE INDEX idx_playedin_rebounds ON PlayedIn(TotalRebounds);
+CREATE INDEX idx_max_score ON QuizAttempts(AttemptScore);
 
 -- Views
 CREATE OR REPLACE VIEW LEADERBOARD AS
