@@ -147,7 +147,7 @@ export default function SpecialQueriesPage() {
     } else if (selectedQuery === "all-correct-single") {
       return ["Username", "Questions Correct", "Leaderboard Rank"];
     } else if (selectedQuery === "intersection") {
-      return ["Player ID", "Player Name"];
+      return ["Player Name"];
     }
     return [];
   };
@@ -170,7 +170,6 @@ export default function SpecialQueriesPage() {
     } else if (selectedQuery === "intersection") {
       return (
         <tr key={idx} className="bg-white border-t hover:bg-gray-50">
-          <td className="p-4">{result.PLAYERID || result.PlayerID}</td>
           <td className="p-4">{result.PNAME || result.PName}</td>
         </tr>
       );
