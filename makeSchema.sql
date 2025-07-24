@@ -140,11 +140,8 @@ CREATE TABLE TeamAnswer (
 
 -- Indexes
 CREATE INDEX idx_answers_correct ON Answers(AnswerNumber, IsCorrect);
-
 CREATE INDEX idx_games_date ON Games(GameDate);
-CREATE INDEX idx_question_txt ON Questions(QuestionText);
 CREATE INDEX idx_team_name ON Teams(TeamName);
-
 CREATE INDEX idx_max_score ON QuizAttempts(AttemptScore);
 
 -- Views
