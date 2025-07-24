@@ -238,10 +238,11 @@ export async function getPlayerStatsIntersection(player1, stat1, player2, stat2)
   }
 }
 
-export async function insertQuestion(username, questionText, answers) {
+export async function insertQuestion(username, questionText, questionType, answers) {
   const requestData = {
     username: username,
     questionText: questionText,
+    questionType: questionType,
     answers: answers,
   };
 
@@ -358,5 +359,50 @@ export async function fetchQuestionCount() {
   } else {
     console.error("fetchQuestionCount failed:", res.status);
     throw new Error("Fetch question count failed");
+  }
+}
+
+export async function fetchLeaderboard() {
+  const res = await fetch("/api/leaderboard", {
+    method: "GET",
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    console.log("fetchLeaderboard success:", data);
+    return { data };
+  } else {
+    console.error("fetchLeaderboard failed:", res.status);
+    throw new Error("Fetch leaderboard failed");
+  }
+}
+
+export async function fetchAllPlayers() {
+  const res = await fetch("/api/players/all", {
+    method: "GET",
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    console.log("fetchAllPlayers success:", data);
+    return { data };
+  } else {
+    console.error("fetchAllPlayers failed:", res.status);
+    throw new Error("Fetch all players failed");
+  }
+}
+
+export async function fetchAllTeams() {
+  const res = await fetch("/api/teams/all", {
+    method: "GET",
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    console.log("fetchAllTeams success:", data);
+    return { data };
+  } else {
+    console.error("fetchAllTeams failed:", res.status);
+    throw new Error("Fetch all teams failed");
   }
 }

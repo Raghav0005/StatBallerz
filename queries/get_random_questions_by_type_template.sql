@@ -8,9 +8,11 @@ SELECT
     a.IsCorrect
 FROM Questions q
 JOIN Answers a ON q.QuestionID = a.QuestionID
-WHERE q.QuestionID IN (
+WHERE q.QuestionType = '{{QUESTION_TYPE}}'
+AND q.QuestionID IN (
     SELECT QuestionID
     FROM Questions
+    WHERE QuestionType = '{{QUESTION_TYPE}}'
     ORDER BY RANDOM()
     LIMIT 7
 )

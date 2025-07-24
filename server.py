@@ -388,7 +388,12 @@ def add_question():
     data = request.get_json()
     username = data.get("username")
     question_text = data.get("questionText")
+    question_type = data.get("questionType", "player")  # Default to "player" if not specified
     answers = data.get("answers", [])
+
+    # Validate question type
+    if question_type not in ["player", "team"]:
+        return jsonify({"error": "Question type must be either 'player' or 'team'"}), 400
 
     # Get UserID
     user_replacements = {"{{USERNAME}}": username}
@@ -407,7 +412,8 @@ def add_question():
     # Insert question
     question_replacements = {
         "{{AUTHOR_ID}}": str(author_id),
-        "{{QUESTION_TEXT}}": question_text_escaped
+        "{{QUESTION_TEXT}}": question_text_escaped,
+        "{{QUESTION_TYPE}}": question_type
     }
     question_insert_result = run_query_from_template("add_question_template.sql", question_replacements)
     print("Insert question result:", question_insert_result)
@@ -415,7 +421,8 @@ def add_question():
     # Get inserted QuestionID
     get_question_id_replacements = {
         "{{AUTHOR_ID}}": str(author_id),
-        "{{QUESTION_TEXT}}": question_text_escaped
+        "{{QUESTION_TEXT}}": question_text_escaped,
+        "{{QUESTION_TYPE}}": question_type
     }
     question_id_results = run_query_from_template("get_latest_question_id_template.sql", get_question_id_replacements)
     print("Get question ID result:", question_id_results)
@@ -468,6 +475,7 @@ def get_random_quiz():
                 questions_dict[question_id] = {
                     "questionId": question_id,
                     "questionText": row['QUESTIONTEXT'],
+                    "questionType": row['QUESTIONTYPE'],
                     "authorId": row['AUTHORID'],
                     "answers": []
                 }
@@ -587,6 +595,32 @@ def get_question_count():
     except Exception as e:
         print("Error fetching question count:", str(e))
         return jsonify({"error": "Failed to fetch question count"}), 500
+
+@app.route("/api/players/all", methods=["GET"])
+def get_all_players():
+    try:
+        results = run_query_from_template("get_all_players_template.sql", {})
+        player_names = [row['PNAME'] for row in results if 'PNAME' in row]
+        return jsonify({
+            "message": "All players retrieved successfully",
+            "players": player_names
+        }), 200
+    except Exception as e:
+        print(f"Error retrieving all players: {str(e)}")
+        return jsonify({"error": "Failed to retrieve players"}), 500
+
+@app.route("/api/teams/all", methods=["GET"])
+def get_all_teams():
+    try:
+        results = run_query_from_template("get_all_teams_template.sql", {})
+        team_names = [row['TEAMNAME'] for row in results if 'TEAMNAME' in row]
+        return jsonify({
+            "message": "All teams retrieved successfully",
+            "teams": team_names
+        }), 200
+    except Exception as e:
+        print(f"Error retrieving all teams: {str(e)}")
+        return jsonify({"error": "Failed to retrieve teams"}), 500
     
 
 if __name__ == "__main__":

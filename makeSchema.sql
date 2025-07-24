@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS QuizAttemptItems;
 DROP TABLE IF EXISTS QuizAttempts;
 DROP TABLE IF EXISTS PlayerAnswer;
-DROP TABLE IF EXISTS GameAnswer;
+DROP TABLE IF EXISTS TeamAnswer;
 DROP TABLE IF EXISTS PlayedIn;
 DROP TABLE IF EXISTS Games;
 DROP TABLE IF EXISTS HasPlayer;
@@ -21,7 +21,8 @@ CREATE TABLE Users (
 CREATE TABLE Questions (
     QuestionID INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
     AuthorID INTEGER NOT NULL,
-    QuestionText VARCHAR(200) NOT NULL,
+    QuestionText VARCHAR(200) NOT NULL UNIQUE,
+    QuestionType VARCHAR(20) NOT NULL CHECK (QuestionType IN ('player', 'team')),
     PRIMARY KEY (QuestionID),
     FOREIGN KEY (AuthorID) REFERENCES Users(UserID) ON DELETE CASCADE
 );
@@ -128,13 +129,13 @@ CREATE TABLE PlayerAnswer (
     FOREIGN KEY (PlayerID) REFERENCES Player(PlayerID) ON DELETE CASCADE
 );
 
-CREATE TABLE GameAnswer (
+CREATE TABLE TeamAnswer (
     QuestionID INTEGER NOT NULL,
     AnswerNumber INTEGER NOT NULL CHECK(AnswerNumber <= 4 and AnswerNumber >= 1),
-    GameID INTEGER NOT NULL,
+    TeamID INTEGER NOT NULL,
     PRIMARY KEY (QuestionID, AnswerNumber),
     FOREIGN KEY (QuestionID, AnswerNumber) REFERENCES Answers(QuestionID, AnswerNumber) ON DELETE CASCADE,
-    FOREIGN KEY (GameID) REFERENCES Games(GameID) ON DELETE CASCADE
+    FOREIGN KEY (TeamID) REFERENCES Teams(TeamID) ON DELETE CASCADE
 );
 
 -- Indexes

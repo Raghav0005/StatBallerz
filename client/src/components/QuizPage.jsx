@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { insertQuestion, fetchRandomQuiz, submitQuizAttempt, fetchQuestionCount } from "../api";
+import { insertQuestion, fetchRandomQuiz, submitQuizAttempt, fetchQuestionCount, fetchAllPlayers, fetchAllTeams } from "../api";
 
 export default function QuizPage() {
   const { user } = useAuth();
@@ -10,6 +10,7 @@ export default function QuizPage() {
   const [questions, setQuestions] = useState([]);
   const [form, setForm] = useState({
     question: "",
+    questionType: "player", // Default to player type
     options: ["", "", "", ""],
     answer: ""
   });
@@ -20,24 +21,65 @@ export default function QuizPage() {
   const [addingQuestion, setAddingQuestion] = useState(false);
   const [submittingQuiz, setSubmittingQuiz] = useState(false);
   const [error, setError] = useState(null);
+  
+  // Local storage for player and team names
+  const [playerNames, setPlayerNames] = useState(new Set());
+  const [teamNames, setTeamNames] = useState(new Set());
+  const [namesLoaded, setNamesLoaded] = useState(false);
 
   useEffect(() => {
-    const loadQuestionCount = async () => {
+    const loadData = async () => {
       try {
-        const result = await fetchQuestionCount();
-        if (result.error) {
-          console.error("Error fetching question count:", result.error);
-          setError(`Error loading question count: ${result.error}`);
+        // Load question count
+        const questionCountResult = await fetchQuestionCount();
+        if (questionCountResult.error) {
+          console.error("Error fetching question count:", questionCountResult.error);
+          setError(`Error loading question count: ${questionCountResult.error}`);
         } else {
-          setNumQuestions(result.data.count);
-          console.log(result.data.count);
+          setNumQuestions(questionCountResult.data.count);
+          console.log(questionCountResult.data.count);
         }
+
+        // Load all player names
+        const playersResult = await fetchAllPlayers();
+        if (playersResult.error) {
+          console.error("Error fetching players:", playersResult.error);
+          setError(`Error loading players: ${playersResult.error}`);
+        } else {
+          // Format names with proper capitalization (First Last)
+          const playerSet = new Set(playersResult.data.players.map(name => 
+            name.toLowerCase().split(' ').map(word => 
+              word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ')
+          ));
+          setPlayerNames(playerSet);
+          console.log("Loaded players:", playersResult.data.players.length);
+          console.log(playerSet);
+        }
+
+        // Load all team names
+        const teamsResult = await fetchAllTeams();
+        if (teamsResult.error) {
+          console.error("Error fetching teams:", teamsResult.error);
+          setError(`Error loading teams: ${teamsResult.error}`);
+        } else {
+          // Format names with proper capitalization (First Last)
+          const teamSet = new Set(teamsResult.data.teams.map(name => 
+            name.toLowerCase().split(' ').map(word => 
+              word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ')
+          ));
+          setTeamNames(teamSet);
+          console.log("Loaded teams:", teamsResult.data.teams.length);
+        }
+
+        setNamesLoaded(true);
       } catch (error) {
-        console.error("Error fetching question count:", error);
-        setError(`Failed to load question count: ${error.message}`);
+        console.error("Error loading data:", error);
+        setError(`Failed to load data: ${error.message}`);
       }
     };
-    loadQuestionCount();
+    loadData();
   }, []);
 
   if (!user) return <Navigate to="/" replace />;
@@ -50,6 +92,22 @@ export default function QuizPage() {
       [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
     }
     return newArray;
+  };
+
+  // Function to validate if a name exists in the appropriate set
+  const validateName = (name, questionType) => {
+    console.log(`Validating name: ${name} for type: ${questionType}`);
+    // Format the input name to proper capitalization for comparison
+    const formattedName = name.trim().toLowerCase().split(' ').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+    console.log(`Validating formatted name: ${formattedName} for type: ${questionType}`);
+    if (questionType === "player") {
+      return playerNames.has(formattedName);
+    } else if (questionType === "team") {
+      return teamNames.has(formattedName);
+    }
+    return false;
   };
 
   const handleChange = (e) => {
@@ -87,7 +145,12 @@ export default function QuizPage() {
   };
 
   const addQuestion = async () => {
-    const { question, options, answer } = form;
+    const { question, questionType, options, answer } = form;
+
+    if (!namesLoaded) {
+      alert("Player and team names are still loading. Please wait a moment and try again.");
+      return;
+    }
 
     if (!question || question.trim() === "") {
       alert("Please enter a question.");
@@ -120,15 +183,43 @@ export default function QuizPage() {
       return;
     }
 
+    // Validate names in options and answer fields
+    const invalidNames = [];
+    
+    // Check each option
+    for (const option of options) {
+      if (!validateName(option, questionType)) {
+        invalidNames.push(option.trim());
+      }
+    }
+    
+    // Check the answer
+    if (!validateName(answer, questionType)) {
+      invalidNames.push(answer.trim());
+    }
+    
+    if (invalidNames.length > 0) {
+      const entityType = questionType === "player" ? "players" : "teams";
+      alert(`Error: The following ${entityType} were not found in the database: ${[...new Set(invalidNames)].join(", ")}. Please verify the names are correct before adding the question.`);
+      return;
+    }
+
     setAddingQuestion(true);
 
     try {
+      // Format names to proper capitalization before inserting
+      const formatName = (name) => {
+        return name.trim().toLowerCase().split(' ').map(word => 
+          word.charAt(0).toUpperCase() + word.slice(1)
+        ).join(' ');
+      };
+
       const answers = options.map((option) => ({
-        text: option.trim(),
+        text: formatName(option),
         isCorrect: option.trim().toLowerCase() === trimmedAnswer
       }));
 
-      const result = await insertQuestion(user.username, question.trim(), answers);
+      const result = await insertQuestion(user.username, question.trim(), form.questionType, answers);
 
       if (result.error) {
         alert(`Error adding question: ${result.error}`);
@@ -136,6 +227,7 @@ export default function QuizPage() {
         setNumQuestions(numQuestions + 1);
         setForm({
           question: "",
+          questionType: "player",
           options: ["","","",""],
           answer: ""
         });
@@ -255,6 +347,12 @@ export default function QuizPage() {
       <div className="max-w-2xl mx-auto mt-10 p-6 border rounded bg-white shadow space-y-6">
         <h1 className="text-2xl font-bold text-center">NBA Trivia Quiz</h1>
 
+        {!namesLoaded && (
+          <div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded">
+            Loading player and team data for validation...
+          </div>
+        )}
+
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
             {error}
@@ -285,8 +383,26 @@ export default function QuizPage() {
                 value={form.question}
                 onChange={handleChange}
                 className="w-full border px-3 py-2 rounded"
-                disabled={addingQuestion}
+                disabled={addingQuestion || !namesLoaded}
               />
+
+              <select
+                name="questionType"
+                value={form.questionType}
+                onChange={handleChange}
+                className="w-full border px-3 py-2 rounded"
+                disabled={addingQuestion || !namesLoaded}
+              >
+                <option value="player">Player Question</option>
+                <option value="team">Team Question</option>
+              </select>
+              
+              <div className="text-sm text-gray-600 mt-1">
+                {form.questionType === "player" 
+                  ? `Create a question about NBA players. Player names will be validated against ${playerNames.size} known players.`
+                  : `Create a question about NBA teams. Team names will be validated against ${teamNames.size} known teams.`
+                }
+              </div>
 
               {/* Options */}
               {form.options.map((opt, index) => (
@@ -297,7 +413,7 @@ export default function QuizPage() {
                   value={opt}
                   onChange={(e) => handleOptionChange(index, e.target.value)}
                   className="w-full border px-3 py-2 rounded"
-                  disabled={addingQuestion}
+                  disabled={addingQuestion || !namesLoaded}
                 />
               ))}
               <input
@@ -307,15 +423,15 @@ export default function QuizPage() {
                 value={form.answer}
                 onChange={handleChange}
                 className="w-full border px-3 py-2 rounded"
-                disabled={addingQuestion}
+                disabled={addingQuestion || !namesLoaded}
               />
 
               <button
                 onClick={addQuestion}
-                disabled={addingQuestion}
+                disabled={addingQuestion || !namesLoaded}
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
               >
-                {addingQuestion ? "Adding Question..." : "Add Question"}
+                {addingQuestion ? "Adding Question..." : !namesLoaded ? "Loading Names..." : "Add Question"}
               </button>
             </div>
 

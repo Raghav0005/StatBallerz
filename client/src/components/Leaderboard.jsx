@@ -1,19 +1,24 @@
 import React, { useEffect, useState } from "react";
+import { fetchLeaderboard } from "../api";
 
 const Leaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
 
   useEffect(() => {
-    const fetchLeaderboard = async () => {
+    const loadLeaderboard = async () => {
       try {
-        const res = await fetch("/api/leaderboard");
-        const data = await res.json();
-        setLeaderboardData(data["results"]);
+        const result = await fetchLeaderboard();
+        if (result.data && result.data.results) {
+          setLeaderboardData(result.data.results);
+        } else {
+          setLeaderboardData([]);
+        }
       } catch (error) {
+        console.error("Error loading leaderboard:", error);
         setLeaderboardData([]);
       }
     };
-    fetchLeaderboard();
+    loadLeaderboard();
   }, []);
 
   const renderRow = (player, index) => {
