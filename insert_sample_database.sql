@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS QuizAttemptItems;
 DROP TABLE IF EXISTS QuizAttempts;
 DROP TABLE IF EXISTS PlayerAnswer;
-DROP TABLE IF EXISTS GameAnswer;
+DROP TABLE IF EXISTS TeamAnswer;
 DROP TABLE IF EXISTS PlayedIn;
 DROP TABLE IF EXISTS Games;
 DROP TABLE IF EXISTS HasPlayer;
@@ -127,14 +127,97 @@ CREATE TABLE PlayerAnswer (
     FOREIGN KEY (PlayerID) REFERENCES Player(PlayerID) ON DELETE CASCADE
 );
 
-CREATE TABLE GameAnswer (
+CREATE TABLE TeamAnswer (
     QuestionID INTEGER NOT NULL,
     AnswerNumber INTEGER NOT NULL CHECK(AnswerNumber <= 4 and AnswerNumber >= 1),
-    GameID INTEGER NOT NULL,
+    TeamID INTEGER NOT NULL,
     PRIMARY KEY (QuestionID, AnswerNumber),
     FOREIGN KEY (QuestionID, AnswerNumber) REFERENCES Answers(QuestionID, AnswerNumber) ON DELETE CASCADE,
-    FOREIGN KEY (GameID) REFERENCES Games(GameID) ON DELETE CASCADE
+    FOREIGN KEY (TeamID) REFERENCES Teams(TeamID) ON DELETE CASCADE
 );
+
+-- Views
+CREATE OR REPLACE VIEW LEADERBOARD AS
+SELECT Users.Username, MAX(AttemptScore) AS MaxScore
+FROM
+    Users
+JOIN
+    QuizAttempts ON Users.UserID = QuizAttempts.UserID
+GROUP BY Username;
+-- ORDER BY DURING THE SELECT QUERY - CANNOT INCLUDE ORDER BY IN VIEW DEFINITION
+
+CREATE OR REPLACE VIEW ALL_PLAYER_INFO AS
+SELECT
+    Player.PlayerID,
+    Player.PName,
+    Player.Height,
+    Player.BodyWeight,
+    Player.DraftYear,
+    Player.DraftRound,
+    Player.DraftPick,
+    Player.Country,
+    Player.School,
+    COUNT(Player.PlayerID) AS GamesPlayed,
+    SUM(PlayedIn.Points) AS TotalPoints,
+    AVG(PlayedIn.Points) AS AveragePoints,
+    SUM(PlayedIn.Assists) AS TotalAssists,
+    AVG(PlayedIn.Assists) AS AverageAssists,
+    SUM(PlayedIn.Blocks) AS TotalBlocks,
+    AVG(PlayedIn.Blocks) AS AverageBlocks,
+    SUM(PlayedIn.Steals) AS TotalSteals,
+    AVG(PlayedIn.Steals) AS AverageSteals,
+    SUM(PlayedIn.TotalRebounds) AS TotalRebounds,
+    AVG(PlayedIn.TotalRebounds) AS AverageRebounds,
+    SUM(PlayedIn.FieldGoalAttempt) AS TotalFieldGoalAttempts,
+    AVG(PlayedIn.FieldGoalAttempt) AS AverageFieldGoalAttempts,
+    SUM(PlayedIn.FieldGoalMade) AS TotalFieldGoalsMade,
+    AVG(PlayedIn.FieldGoalMade) AS AverageFieldGoalsMade,
+    SUM(PlayedIn.ThreePointAttempt) AS TotalThreePointAttempts,
+    AVG(PlayedIn.ThreePointAttempt) AS AverageThreePointAttempts,
+    SUM(PlayedIn.ThreePointMade) AS TotalThreePointersMade,
+    AVG(PlayedIn.ThreePointMade) AS AverageThreePointersMade,
+    SUM(PlayedIn.FreeThrowAttempt) AS TotalFreeThrowAttempts,
+    AVG(PlayedIn.FreeThrowAttempt) AS AverageFreeThrowAttempts,
+    SUM(PlayedIn.FreeThrowMade) AS TotalFreeThrowsMade,
+    AVG(PlayedIn.FreeThrowMade) AS AverageFreeThrowsMade,
+    SUM(PlayedIn.PersonalFouls) AS TotalPersonalFouls,
+    AVG(PlayedIn.PersonalFouls) AS AveragePersonalFouls,
+    SUM(PlayedIn.Turnovers) AS TotalTurnovers,
+    AVG(PlayedIn.Turnovers) AS AverageTurnovers
+FROM
+    Player
+LEFT JOIN
+    PlayedIn ON Player.PlayerID = PlayedIn.PlayerID
+GROUP BY
+    Player.PlayerID,
+    Player.PName,
+    Player.Height,
+    Player.BodyWeight,
+    Player.DraftYear,
+    Player.DraftRound,
+    Player.DraftPick,
+    Player.Country,
+    Player.School;
+
+CREATE OR REPLACE VIEW ALL_GAME_INFO AS
+SELECT
+    Games.GameID,
+    Games.GameDate,
+    Games.GameType,
+    Games.Attendance,
+    HomeTeam.TeamName AS HomeTeamName,
+    AwayTeam.TeamName AS AwayTeamName,
+    Games.HomeTeamScore,
+    Games.AwayTeamScore,
+    Winner.TeamName AS WinnerTeamName
+FROM
+    Games
+JOIN
+    Teams AS HomeTeam ON Games.HomeTeamID = HomeTeam.TeamID
+JOIN
+    Teams AS AwayTeam ON Games.AwayTeamID = AwayTeam.TeamID
+LEFT JOIN
+    Teams AS Winner ON Games.Winner = Winner.TeamID;
 
 -- =======================
 -- Insert Sample Data
@@ -194,3 +277,67 @@ INSERT INTO PlayedIn (GameID, PlayerID, NumSeconds, Points, Assists, Blocks, Ste
 -- Game 1004: Warriors vs Nuggets
 (1004, 2, 2400, 31, 7, 0, 2, 5, 21, 12, 12, 6, 5, 3, 2, 3),
 (1004, 4, 2450, 27, 11, 1, 1, 13, 19, 10, 3, 2, 6, 5, 3, 2);
+
+
+INSERT INTO Questions (AuthorID, QuestionText) VALUES
+(1, 'Which player scored the most points in Game 1001?'),
+(1, 'Which team won Game 1003?'),
+(1, 'Who had the most assists in Game 1004?'),
+(1, 'Which player had the most rebounds in Game 1002?');
+
+INSERT INTO Answers (QuestionID, AnswerNumber, ResponseText, IsCorrect) VALUES
+(1, 1, 'LeBron James', TRUE),
+(1, 2, 'Stephen Curry', FALSE),
+(1, 3, 'Giannis Antetokounmpo', FALSE),
+(1, 4, 'Nikola Jokic', FALSE),
+(2, 1, 'Los Angeles Lakers', TRUE),
+(2, 2, 'San Antonio Spurs', FALSE),
+(2, 3, 'Golden State Warriors', FALSE),
+(2, 4, 'Milwaukee Bucks', FALSE),
+(3, 1, 'Nikola Jokic', TRUE),
+(3, 2, 'Stephen Curry', FALSE),
+(3, 3, 'Victor Wembanyama', FALSE),
+(3, 4, 'Giannis Antetokounmpo', FALSE),
+(4, 1, 'Giannis Antetokounmpo', FALSE),
+(4, 2, 'Nikola Jokic', TRUE),
+(4, 3, 'LeBron James', FALSE),
+(4, 4, 'Victor Wembanyama', FALSE);
+
+INSERT INTO PlayerAnswer (QuestionID, AnswerNumber, PlayerID) VALUES
+(1, 1, 1),
+(1, 2, 2),
+(1, 3, 3),
+(1, 4, 4),
+(3, 1, 4),
+(3, 2, 2),
+(3, 3, 5),
+(3, 4, 3),
+(4, 1, 3),
+(4, 2, 4),
+(4, 3, 1),
+(4, 4, 5);
+
+INSERT INTO TeamAnswer (QuestionID, AnswerNumber, TeamID) VALUES
+(2, 1, 1),
+(2, 2, 5),
+(2, 3, 2),
+(2, 4, 3);
+
+INSERT INTO QuizAttempts (UserID, AttemptScore) VALUES
+(2, 3),
+(3, 3),
+(4, 2),
+(5, 1);
+
+INSERT INTO QuizAttemptItems (AttemptID, QuestionID, AnswerNumber) VALUES
+(1, 1, 1),
+(1, 2, 1),
+(1, 3, 1),
+(1, 4, 2),
+(2, 1, 1),
+(2, 2, 1),
+(2, 3, 1),
+(2, 4, 2),
+(3, 1, 1),
+(3, 2, 2),
+(4, 2, 3);
