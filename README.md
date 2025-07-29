@@ -74,11 +74,15 @@ git clone https://github.com/Raghav0005/StatBallerz.git
 
 ***
 
-## Current Features -- Milestone 1 + 2:
+## Current Features -- Milestone 1 + 2 + 3:
 
-The current iteration of the project as of Milestone 2 has a successfully set up frontend (React + Javascript + Vite) and backend (Flask). We have successfully integrated 3-4 simple features/functionalities for the project! 
+As of Milestone 3, our application is fully functioning and implements the necessary 5 basic SQL features as well as 5 advanced SQL features.
 
-Our SQL schema's have been appropriately defined and created, and our application successfully leverages the database for both sample and production data. The user logic has been implemented as shown below (4 basic features), as well as an additional feature of allowing the user to search for players in the searchbar once logged in. Advanced queries and associated logic will be further implemented on top of these basic application features in Milestone 3.)
+Our SQL schema have been appropriately defined and created, and our application successfully leverages the database for both sample and production data. Testing for our SQL is included in the tests folder for both the 5 basic features and 5 advanced features, with instructions on how to execute the tests yourself above.
+
+For clarity, we have also included screenshots demonstrating all the required (and additional) features for the application that have been implemented below:
+
+### Basic Features
 
 Home/Login Page: <br/>
 <img width="500" alt="Screen Shot 2025-06-19 at 3 20 17 PM" src="https://github.com/user-attachments/assets/3018aa47-03e0-4ba8-9116-a4ca98acaf03" />
@@ -102,7 +106,9 @@ Account Deletion: <br/>
 <img width="500" alt="Screen Shot 2025-06-19 at 3 24 54 PM" src="https://github.com/user-attachments/assets/60329cc1-d163-4020-96f7-ccf89516f1cf" />
 <img width="500" alt="Screen Shot 2025-06-19 at 3 24 54 PM" src="https://github.com/user-attachments/assets/2bc0258f-63e1-4128-963e-7b9b8a829978" />
 
-Search for Player (Additional Feature on top of M2):
-<img width="1512" alt="Screen Shot 2025-07-08 at 9 32 31 PM" src="https://github.com/user-attachments/assets/91b3b0f0-1c6c-45da-9836-4aee7245d95a" />
+### Advanced Features
 
-* Sample/production test data and test queries for our 5 basic features for Milestone 2 is in the 'test' folder
+### Additional Features
+
+Search for Player (Additional Feature):
+<img width="1512" alt="Screen Shot 2025-07-08 at 9 32 31 PM" src="https://github.com/user-attachments/assets/91b3b0f0-1c6c-45da-9836-4aee7245d95a" />
