@@ -106,9 +106,27 @@ Account Deletion: <br/>
 <img width="500" alt="Screen Shot 2025-06-19 at 3 24 54 PM" src="https://github.com/user-attachments/assets/60329cc1-d163-4020-96f7-ccf89516f1cf" />
 <img width="500" alt="Screen Shot 2025-06-19 at 3 24 54 PM" src="https://github.com/user-attachments/assets/2bc0258f-63e1-4128-963e-7b9b8a829978" />
 
+Average of Player Stat For Every Game Between DATE1 and DATE2: <br/>
+<img width="876" height="762" alt="Screen Shot 2025-07-29 at 6 10 37 PM" src="https://github.com/user-attachments/assets/87179217-6322-4bf9-9992-02fcc8fa18e9" />
+
 ### Advanced Features
+Perfect Scorers: <br/>
+<img width="857" height="524" alt="Screen Shot 2025-07-29 at 5 56 33 PM" src="https://github.com/user-attachments/assets/e6737e28-fe54-48b1-8b42-6ff2168b7822" />
 
-### Additional Features
+Answered Same Quiz Questions: <br/>
+<img width="857" height="568" alt="Screen Shot 2025-07-29 at 6 03 04 PM" src="https://github.com/user-attachments/assets/aeed3a82-52ab-4379-818f-dc6452dc1df1" />
 
-Search for Player (Additional Feature):
-<img width="1512" alt="Screen Shot 2025-07-08 at 9 32 31 PM" src="https://github.com/user-attachments/assets/91b3b0f0-1c6c-45da-9836-4aee7245d95a" />
+Player Intersection: <br/>
+<img width="640" height="726" alt="Screen Shot 2025-07-29 at 6 04 50 PM" src="https://github.com/user-attachments/assets/62909bf7-9a7b-44d8-953a-f7392b981374" />
+
+Player Statistics View: <br/>
+<img width="850" height="559" alt="Screen Shot 2025-07-29 at 6 07 26 PM" src="https://github.com/user-attachments/assets/427e0b9d-8eae-4647-9a86-585cbedc0891" />
+
+Indexes: <br/>
+** Used for fast retrieval player names, game dates, team names and attempt scores **
+Example of team name lookup with indices: <br.>
+<img width="847" height="206" alt="Screen Shot 2025-07-29 at 6 12 48 PM" src="https://github.com/user-attachments/assets/7f6d124f-1a60-4eaf-b2e3-6558c4b5a88d" />
+
+
+### Additional Features (Add question to quiz)
+
