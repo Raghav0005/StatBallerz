@@ -537,7 +537,7 @@ def submit_quiz_attempt():
         if not user_results or len(user_results) == 0:
             return jsonify({"error": "User not found"}), 404
         
-        user_id = user_results[0]['USERID']  # Get UserID from dictionary
+        user_id = user_results[0]['USERID']
         print(f"Found user_id: {user_id}")
         
         # Insert the quiz attempt - Convert integers to strings for template replacement
@@ -557,7 +557,7 @@ def submit_quiz_attempt():
         if not attempt_id_results or len(attempt_id_results) == 0:
             return jsonify({"error": "Failed to retrieve attempt ID"}), 500
         
-        attempt_id = attempt_id_results[0]['ATTEMPTID']  # Get AttemptID from dictionary
+        attempt_id = attempt_id_results[0]['ATTEMPTID']
         print(f"Found attempt_id: {attempt_id}")
         
         # Insert quiz attempt items - Convert all integers to strings
@@ -626,24 +626,4 @@ def get_all_teams():
 if __name__ == "__main__":
     os.system("./setupSchema.sh")
     os.system("mkdir .results")
-    
-    # test user signup + delete
-    # with app.test_client() as client:
-    #     response = client.post(
-    #         "/api/signup",
-    #         data={"username": "testuser", "password": "password"},
-    #         content_type='application/x-www-form-urlencoded'
-    #     )
-    
-    #     os.system('./runSqlCmd.sh .listTables.sql')
-    #     results = parse_sql_shell_output()
-    #     print("User results:", results)
-        
-    #     response = client.delete('/api/user?username=testuser')
-    #     print(response.json)
-        
-    #     os.system('./runSqlCmd.sh .listTables.sql')
-    #     results = parse_sql_shell_output()
-    #     print("User results:", results)
-        
     app.run(debug=True, port=5000)
