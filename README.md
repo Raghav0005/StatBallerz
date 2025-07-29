@@ -123,10 +123,22 @@ Player Statistics View: <br/>
 <img width="850" height="559" alt="Screen Shot 2025-07-29 at 6 07 26 PM" src="https://github.com/user-attachments/assets/427e0b9d-8eae-4647-9a86-585cbedc0891" />
 
 Indexes: <br/>
-** Used for fast retrieval player names, game dates, team names and attempt scores **
-Example of team name lookup with indices: <br.>
+** Used for fast retrieval player names, game dates, team names and attempt scores ** <br/>
+Example of team name lookup with indices: <br/>
 <img width="847" height="206" alt="Screen Shot 2025-07-29 at 6 12 48 PM" src="https://github.com/user-attachments/assets/7f6d124f-1a60-4eaf-b2e3-6558c4b5a88d" />
 
 
-### Additional Features (Add question to quiz)
+### Additional Features
+Add Player Question:
+<img width="507" height="630" alt="Screen Shot 2025-07-29 at 6 17 17 PM" src="https://github.com/user-attachments/assets/ce047dd8-c001-4f6d-9d93-2cfab5666a6c" />
+
+Add Team Question:
+<img width="504" height="631" alt="Screen Shot 2025-07-29 at 6 18 34 PM" src="https://github.com/user-attachments/assets/62a39008-cd13-43bb-b480-480fb778034e" />
+
+Quiz feature:
+<img width="826" height="766" alt="Screen Shot 2025-07-29 at 6 19 54 PM" src="https://github.com/user-attachments/assets/dcbe8e3b-7fb7-4731-8cc1-5bc8e92c0cc4" />
+<img width="632" height="750" alt="Screen Shot 2025-07-29 at 6 20 22 PM" src="https://github.com/user-attachments/assets/d23f036a-fa1c-49f6-82c5-192bb6089818" />
+
+Leaderboard View for Quiz Attempts:
+<img width="541" height="477" alt="Screen Shot 2025-07-29 at 6 20 36 PM" src="https://github.com/user-attachments/assets/4e92ebb1-48da-42a3-9925-e11122c6e6a9" />
 
