@@ -325,7 +325,7 @@ INSERT INTO TeamAnswer (QuestionID, AnswerNumber, TeamID) VALUES
 
 INSERT INTO QuizAttempts (UserID, AttemptScore) VALUES
 (2, 3),
-(3, 3),
+(3, 4),
 (4, 2),
 (5, 1);
 
